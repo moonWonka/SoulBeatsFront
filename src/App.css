@@ -1,0 +1,32 @@
+/* App.css */
+
+/* Reinicio básico de márgenes y paddings */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Ajuste del body para ocupar el 100% de la ventana */
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: "Helvetica", "Arial", sans-serif; /* Ajusta la fuente si quieres */
+}
+
+/* Contenedor principal de la aplicación */
+.App {
+  /* Si quieres que todo el fondo sea blanco, por ejemplo */
+  background-color: #fafafa;
+  
+  /* Mínimo alto para que ocupe toda la pantalla */
+  min-height: 100vh;
+
+  /* Flex para centrar contenido si lo deseas;
+     Home en sí define su propio layout, así que aquí
+     puedes centrar, por ejemplo, si usas otras secciones */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
