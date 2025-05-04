@@ -1,5 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
+import { LoginPage } from './pages/LoginPage';
+import { HomePage } from './pages/HomePage';
+
 import './App.css';
 import { HomePage } from './pages/HomePage';
 import { AboutPage } from './pages/AboutPage';
