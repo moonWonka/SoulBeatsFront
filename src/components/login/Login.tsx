@@ -1,109 +1,66 @@
 import "./login.css";
 import { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebaseConfig";
 
-interface LogProps {
+interface LoginProps {
   onSetUser: (user: string) => void;
 }
 
-interface User {
-  username: string;
-  password: string;
-}
+export function Login({ onSetUser }: LoginProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-// Simulando una base de datos de usuarios
-const usersDB: User[] = [{ username: "admin", password: "1234" }];
+  const handleLogin = async () => {
+    try {
+      // Inicia sesión con Firebase
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const token = await userCredential.user.getIdToken();
 
-export function Login({ onSetUser }: LogProps) {
-  const [user, setUser] = useState("");
-  const [pass, setPass] = useState("");
-  const [error, setError] = useState(false);
-  const [corretLogin, setCorretLogin] = useState(false);
-  const [isRegistering, setIsRegistering] = useState(false);
+      // Envía el token al backend
+      const response = await fetch("http://tu-backend.com/api/auth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token }),
+      });
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-
-    if (user === "" || pass === "") {
-      setError(true);
-      return;
-    }
-
-    if (isRegistering) {
-      // Registro
-      const userExists = usersDB.some((u) => u.username === user);
-      if (userExists) {
-        setError(true);
+      if (response.ok) {
+        const data = await response.json();
+        onSetUser(data.username); // Actualiza el usuario con la respuesta del backend
       } else {
-        usersDB.push({ username: user, password: pass });
-        setError(false);
-        setCorretLogin(true);
-        onSetUser(user);
+        const errorData = await response.json();
+        setError(errorData.message || "Error al autenticar con el backend");
       }
-    } else {
-      // Login
-      const validUser = usersDB.find((u) => u.username === user && u.password === pass);
-      if (validUser) {
-        setError(false);
-        setCorretLogin(true);
-        onSetUser(user);
+    } catch (err: unknown) {
+      // Verifica si el error es una instancia de Error
+      if (err instanceof Error) {
+        setError(`Error al iniciar sesión: ${err.message}`);
       } else {
-        setError(true);
+        setError("Ocurrió un error desconocido.");
       }
     }
   };
 
   return (
-    <section className="login-container">
-      <img
-        src="/public/images/soulBeats.webp"
-        alt="soulBeats logo"
-        className="login-logo"
+    <div className="login-container">
+      <h2>Iniciar Sesión</h2>
+      {error && <p className="error">{error}</p>}
+      <input
+        type="email"
+        placeholder="Correo electrónico"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
       />
-      <h1>{isRegistering ? "Registro" : "Inicio Sesion"}</h1>
-
-      <form className="formulario" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Ingrese UserName"
-          value={user}
-          onChange={(e) => setUser(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Ingrese contraseña"
-          value={pass}
-          onChange={(e) => setPass(e.target.value)}
-        />
-
-        <button type="submit">
-          {isRegistering ? "Registrarse" : "Iniciar Sesión"}
-        </button>
-      </form>
-
-      {error && (
-        <p className="login-error">
-          Error: {isRegistering ? "El usuario ya existe" : "Credenciales incorrectas"}
-        </p>
-      )}
-      {corretLogin && (
-        <p className="login-success">
-          {isRegistering ? "Registro exitoso" : "Login correcto"}
-        </p>
-      )}
-
-      <button
-        onClick={() => {
-          setIsRegistering(!isRegistering);
-          // Resetea los estados de error/correct
-          setError(false);
-          setCorretLogin(false);
-        }}
-        className="toggle-button"
-      >
-        {isRegistering
-          ? "¿Ya tienes una cuenta? Inicia sesión"
-          : "¿No tienes cuenta? Regístrate"}
-      </button>
-    </section>
+      <input
+        type="password"
+        placeholder="Contraseña"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button onClick={handleLogin}>Iniciar Sesión</button>
+    </div>
   );
 }

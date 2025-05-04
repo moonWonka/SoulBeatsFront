@@ -1,19 +1,25 @@
-import { Home } from './components/home/Home';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 import './App.css';
+import { HomePage } from './pages/HomePage';
+import { AboutPage } from './pages/AboutPage';
 
 function App() {
   const [user, setUser] = useState<string>("");
 
-  // "Envolvemos" setUser para que coincida con la firma (user: string) => void
   const handleSetUser = (newUser: string) => {
     setUser(newUser);
   };
 
   return (
-    <div className="App">
-      <Home user={user} onSetUser={handleSetUser} />
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<HomePage user={user} onSetUser={handleSetUser} />} />
+          <Route path="/about" element={<AboutPage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
