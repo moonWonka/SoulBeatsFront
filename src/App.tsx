@@ -1,5 +1,7 @@
-import { Home } from './components/home/Home';
 import { useState } from 'react';
+import { LoginPage } from './pages/LoginPage';
+import { HomePage } from './pages/HomePage';
+
 import './App.css';
 
 function App() {
@@ -12,7 +14,11 @@ function App() {
 
   return (
     <div className="App">
-      <Home user={user} onSetUser={handleSetUser} />
+      {user ? (
+        <HomePage user={user} />
+      ) : (
+        <LoginPage onSetUser={handleSetUser} />
+      )}
     </div>
   );
 }
