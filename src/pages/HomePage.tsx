@@ -1,12 +1,10 @@
-import React from 'react';
-import Home from '../components/home/Home';
+import { Home } from '../components/home/Home';
 
-const HomePage: React.FC = () => {
-  return (
-    <div>
-      <Home />
-    </div>
-  );
-};
+interface HomePageProps {
+  user: string;
+  onSetUser: (newUser: string) => void;
+}
 
-export default HomePage;
+export function HomePage({ user, onSetUser }: HomePageProps) {
+  return <Home user={user} onSetUser={onSetUser} />;
+}
