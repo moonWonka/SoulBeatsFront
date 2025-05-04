@@ -1,12 +1,15 @@
-import React from 'react';
-import Login from '../components/login/Login';
+import { Login } from '../components/login/Login';
 
-const LoginPage: React.FC = () => {
+interface LoginPageProps {
+  onSetUser: (user: string) => void;
+}
+
+export function LoginPage({ onSetUser }: LoginPageProps) {
   return (
     <div className="login-page">
-      <Login />
+      <Login onSetUser={onSetUser} />
     </div>
   );
-};
+}
 
 export default LoginPage;
