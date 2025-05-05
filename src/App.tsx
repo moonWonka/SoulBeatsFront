@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useState } from 'react';
 
 import './App.css';
@@ -17,6 +17,25 @@ function App() {
   return (
     <Router>
       <div className="App">
+        {/* Navbar */}
+        <nav className="navbar">
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
+            <li>
+              <Link to="/login">Login</Link>
+            </li>
+            <li>
+              <Link to="/swipe">Swipe</Link>
+            </li>
+          </ul>
+        </nav>
+
+        {/* Routes */}
         <Routes>
           <Route path="/" element={<HomePage user={user} onSetUser={handleSetUser} />} />
           <Route path="/about" element={<AboutPage />} />
