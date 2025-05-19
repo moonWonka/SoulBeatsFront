@@ -1,0 +1,38 @@
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom right, #9333ea, #ec4899);
+}
+
+.card-content {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.card-content h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 12px 0;
+}
+
+.card-content p {
+  font-size: 14px;
+  margin: 0;
+  max-width: 240px;
+}
+
+.genre-icon {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}

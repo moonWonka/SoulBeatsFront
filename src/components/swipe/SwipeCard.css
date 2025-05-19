@@ -1,0 +1,15 @@
+.swipe-card {
+  position: absolute;
+  width: 280px;
+  height: 400px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+  padding: 20px;
+  will-change: transform;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+}
