@@ -9,6 +9,8 @@ import { HomePage } from './pages/HomePage'
 import { AboutPage } from './pages/AboutPage'
 import { LoginPage } from './pages/LoginPage'
 import { SwipePage } from './pages/SwipePage'
+import { GradientButton } from './components/shared/GradientButton'
+import { OutlineButton } from './components/shared/OutlineButton'
 
 function App() {
   const [user, setUser] = useState<string>('')
@@ -40,6 +42,13 @@ function App() {
           <Route path="/login" element={<LoginPage onSetUser={handleSetUser} />} />
           <Route path="/swipe" element={<SwipePage />} />
         </Routes>
+        {/* <GradientButton onClick={() => console.log('Clicked')}>
+          <span>🔒 Continuar</span>
+        </GradientButton> */}
+
+        <OutlineButton onClick={() => console.log('Clicked')}>
+          <span>🔒 Continuar</span>
+        </OutlineButton>
       </div>
     </Router>
   )
