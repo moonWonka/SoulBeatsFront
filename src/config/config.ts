@@ -1,1 +1,1 @@
-export const BASE_API_URL = 'https://tu-backend.com/api';
+export const BASE_API_URL = 'https://backendsoulbeats-ggeed4cthbcxf9a5.brazilsouth-01.azurewebsites.net/';

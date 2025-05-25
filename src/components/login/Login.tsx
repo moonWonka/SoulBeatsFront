@@ -3,6 +3,7 @@ import HeartIcon from '../icons/HeartIcon';
 import { GradientButton } from '../shared/GradientButton';
 import { OutlineButton } from '../shared/OutlineButton';
 import { Eye, EyeOff } from 'lucide-react'; // Íconos para mostrar/ocultar
+import { register } from '../../services/authService'; // Importa el servicio de registro
 
 interface LoginProps {
   onSetUser: (user: string) => void;
@@ -17,7 +18,7 @@ export function Login({ onSetUser }: LoginProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 
@@ -31,8 +32,19 @@ export function Login({ onSetUser }: LoginProps) {
         setError('Las contraseñas no coinciden.');
         return;
       }
-      console.log('Registrando usuario con:', { email, password });
-      onSetUser(email);
+
+      try {
+        // Llama al servicio de registro
+        const response = await register(email, password);
+        console.log('Usuario registrado:', response);
+        onSetUser(response.user); // Asume que el backend devuelve un objeto con el usuario
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message || 'Error al registrarse.');
+        } else {
+          setError('Error al registrarse.');
+        }
+      }
     } else {
       console.log('Iniciando sesión con:', { email, password });
       onSetUser(email);
@@ -60,7 +72,10 @@ export function Login({ onSetUser }: LoginProps) {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Correo electrónico
               </label>
               <input
@@ -75,7 +90,10 @@ export function Login({ onSetUser }: LoginProps) {
             </div>
 
             <div className="relative">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Contraseña
               </label>
               <input
