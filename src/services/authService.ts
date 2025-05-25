@@ -8,8 +8,14 @@ export async function login(email: string, password: string) {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Error al iniciar sesión.');
+    let errorMessage = 'Error al iniciar sesión.';
+    try {
+      const error = await response.json();
+      errorMessage = error.message || errorMessage;
+    } catch (e) {
+      console.error('Failed to parse error response as JSON:', e);
+    }
+    throw new Error(errorMessage);
   }
 
   return response.json(); // { token, user, ... }
