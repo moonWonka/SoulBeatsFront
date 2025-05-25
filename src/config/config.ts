@@ -1,0 +1,1 @@
+export const API_URL = 'https://tu-backend.com/api/auth';
