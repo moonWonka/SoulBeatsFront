@@ -1,7 +1,7 @@
-import { API_URL } from '../config/config';
+import { BASE_API_URL } from '../config/config';
 
 export async function login(email: string, password: string) {
-  const response = await fetch(`${API_URL}/login`, {
+  const response = await fetch(`${BASE_API_URL}/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
@@ -22,7 +22,7 @@ export async function login(email: string, password: string) {
 }
 
 export async function register(email: string, password: string) {
-  const response = await fetch(`${API_URL}/register`, {
+  const response = await fetch(`${BASE_API_URL}/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
