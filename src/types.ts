@@ -13,7 +13,7 @@ export interface UserProfile {
 export interface Match {
   id: string;
   matchedUser: UserProfile;
-  timestamp: Date;
+  timestamp: string;
   icebreaker?: string | null;
 }
 
