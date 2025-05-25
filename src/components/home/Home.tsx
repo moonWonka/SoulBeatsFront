@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Login } from "../login/Login";
+import { Login } from "../login/Login2";
 import { GradientButton } from "../shared/GradientButton";
 import { VideoPanel } from "../video/VideoPanel";
 import "./home.css";

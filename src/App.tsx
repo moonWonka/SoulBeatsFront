@@ -1,57 +1,50 @@
 // src/App.tsx
 
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
-import { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { useState } from 'react';
 
-import './App.css'
+import './App.css';
 
-import { HomePage } from './pages/HomePage'
-import { AboutPage } from './pages/AboutPage'
-import { LoginPage } from './pages/LoginPage'
-import { SwipePage } from './pages/SwipePage'
-import { GradientButton } from './components/shared/GradientButton'
-import { OutlineButton } from './components/shared/OutlineButton'
+import { HomePage } from './pages/HomePage';
+import { AboutPage } from './pages/AboutPage';
+import { LoginPage } from './pages/LoginPage';
+import { SwipePage } from './pages/SwipePage';
 
 function App() {
-  const [user, setUser] = useState<string>('')
+  const [user, setUser] = useState<string>('');
 
   const handleSetUser = (newUser: string) => {
-    setUser(newUser)
-  }
+    setUser(newUser);
+  };
 
   return (
     <Router>
-      <div className="App">
+      <div className="App min-h-screen flex flex-col">
         {/* Navbar */}
-        <nav className="navbar">
-          <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/about">About</Link></li>
-            <li><Link to="/login">Login</Link></li>
-            <li><Link to="/swipe">Swipe</Link></li>
+        <nav className="flex-shrink-0 bg-gray-800 text-white py-4">
+          <ul className="flex justify-center space-x-4">
+            <li><Link to="/" className="hover:text-rose-500">Home</Link></li>
+            <li><Link to="/about" className="hover:text-rose-500">About</Link></li>
+            <li><Link to="/login" className="hover:text-rose-500">Login</Link></li>
+            <li><Link to="/swipe" className="hover:text-rose-500">Swipe</Link></li>
           </ul>
         </nav>
 
         {/* Main Routes */}
-        <Routes>
-          <Route
-            path="/"
-            element={<HomePage user={user} onSetUser={handleSetUser} />}
-          />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/login" element={<LoginPage onSetUser={handleSetUser} />} />
-          <Route path="/swipe" element={<SwipePage />} />
-        </Routes>
-        {/* <GradientButton onClick={() => console.log('Clicked')}>
-          <span>🔒 Continuar</span>
-        </GradientButton> */}
-
-        <OutlineButton onClick={() => console.log('Clicked')}>
-          <span>🔒 Continuar</span>
-        </OutlineButton>
+        <div className="flex-grow">
+          <Routes>
+            <Route
+              path="/"
+              element={<HomePage user={user} onSetUser={handleSetUser} />}
+            />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/login" element={<LoginPage onSetUser={handleSetUser} />} />
+            <Route path="/swipe" element={<SwipePage />} />
+          </Routes>
+        </div>
       </div>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
