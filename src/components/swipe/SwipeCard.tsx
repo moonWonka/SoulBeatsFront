@@ -5,9 +5,10 @@ import { useGesture } from '@use-gesture/react'
 interface SwipeCardProps {
   onSwipe: (direction: 'left' | 'right') => void
   children: React.ReactNode
+  resetAfterSwipe?: boolean // Nueva prop para reiniciar la tarjeta
 }
 
-export function SwipeCard({ onSwipe, children }: SwipeCardProps) {
+export function SwipeCard({ onSwipe, children, resetAfterSwipe = false }: SwipeCardProps) {
   const [{ x, rot, scale }, api] = useSpring(() => ({
     x: 0,
     rot: 0,
@@ -23,6 +24,12 @@ export function SwipeCard({ onSwipe, children }: SwipeCardProps) {
       if (!down && trigger) {
         api.start({ x: dir * 1000, rot: dir * 45, scale: 1 })
         onSwipe(dir === 1 ? 'right' : 'left')
+
+        if (resetAfterSwipe) {
+          setTimeout(() => {
+            api.start({ x: 0, rot: 0, scale: 1 }) // Reinicia la posición
+          }, 300)
+        }
       } else {
         api.start({
           x: down ? mx : 0,
