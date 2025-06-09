@@ -2,6 +2,7 @@ import "./login.css";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
+import config from "../../config";
 
 interface LoginProps {
   onSetUser: (user: string) => void;
@@ -14,17 +15,23 @@ export function Login({ onSetUser }: LoginProps) {
 
   const handleLogin = async () => {
     try {
+      // Validación de contraseña
+      if (password.length < 6) {
+        setError("La contraseña debe tener al menos 6 caracteres.");
+        return;
+      }
+
       // Inicia sesión con Firebase
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const token = await userCredential.user.getIdToken();
 
-      // Envía el token al backend
-      const response = await fetch("http://tu-backend.com/api/auth", {
-        method: "POST",
+      // Envía el token al backend usando GET
+      const response = await fetch(`${config.backendUrl}/User/${userCredential.user.uid}/info`, {
+        method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+          "api-version": "1.0",
         },
-        body: JSON.stringify({ token }),
       });
 
       if (response.ok) {
