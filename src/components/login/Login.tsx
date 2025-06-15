@@ -3,13 +3,13 @@ import HeartIcon from '../icons/HeartIcon';
 import { GradientButton } from '../shared/GradientButton';
 import { OutlineButton } from '../shared/OutlineButton';
 import { Eye, EyeOff } from 'lucide-react'; // Íconos para mostrar/ocultar
-import { register } from '../../services/authService'; // Importa el servicio de registro
+import { register } from '../../services/backendService'; // Importa el servicio de registro
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '../../firebaseConfig';
+import { useAuth } from '../../context/AuthContext';
 
-interface LoginProps {
-  onSetUser: (user: string) => void;
-}
-
-export function Login({ onSetUser }: LoginProps) {
+export function Login() {
+  const { login, user } = useAuth(); // Usa el contexto para manejar el estado del usuario
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -27,6 +27,11 @@ export function Login({ onSetUser }: LoginProps) {
       return;
     }
 
+    if (password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
     if (isRegistering) {
       if (password !== confirmPassword) {
         setError('Las contraseñas no coinciden.');
@@ -34,10 +39,8 @@ export function Login({ onSetUser }: LoginProps) {
       }
 
       try {
-        // Llama al servicio de registro
         const response = await register(email, password);
         console.log('Usuario registrado:', response);
-        onSetUser(response.user); // Asume que el backend devuelve un objeto con el usuario
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message || 'Error al registrarse.');
@@ -46,14 +49,31 @@ export function Login({ onSetUser }: LoginProps) {
         }
       }
     } else {
-      console.log('Iniciando sesión con:', { email, password });
-      onSetUser(email);
+      try {
+        await login(email, password); // Usa el método `login` del contexto
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(`Error al iniciar sesión: ${err.message}`);
+        } else {
+          setError('Ocurrió un error desconocido.');
+        }
+      }
     }
   };
 
-  const handleGoogleAuth = () => {
-    console.log('Autenticando con Google...');
-    onSetUser('UsuarioGoogle');
+  const handleGoogleAuth = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const token = await result.user.getIdToken();
+      console.log('Usuario autenticado con Google:', result.user);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(`Error con Google: ${err.message}`);
+      } else {
+        setError('Error desconocido al iniciar sesión con Google.');
+      }
+    }
   };
 
   return (
@@ -72,10 +92,7 @@ export function Login({ onSetUser }: LoginProps) {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Correo electrónico
               </label>
               <input
@@ -90,10 +107,7 @@ export function Login({ onSetUser }: LoginProps) {
             </div>
 
             <div className="relative">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 Contraseña
               </label>
               <input
@@ -118,10 +132,7 @@ export function Login({ onSetUser }: LoginProps) {
 
             {isRegistering && (
               <div className="relative">
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
                   Repite tu contraseña
                 </label>
                 <input
@@ -164,9 +175,7 @@ export function Login({ onSetUser }: LoginProps) {
 
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-600">
-              {isRegistering
-                ? '¿Ya tienes una cuenta?'
-                : '¿No tienes una cuenta?'}{' '}
+              {isRegistering ? '¿Ya tienes una cuenta?' : '¿No tienes una cuenta?'}{' '}
               <button
                 type="button"
                 onClick={() => setIsRegistering(!isRegistering)}
