@@ -1,10 +1,14 @@
-import { Home } from '../components/home/Home';
+import React from 'react';
+import { useAuth } from '../context/AuthContext';
 
-interface HomePageProps {
-  user: string;
-  onSetUser: (newUser: string) => void;
+export function HomePage() {
+  const { user } = useAuth();
+
+  return (
+    <div>
+      <h1>Bienvenido, {user?.email || 'Invitado'}</h1>
+    </div>
+  );
 }
 
-export function HomePage({ user, onSetUser }: HomePageProps) {
-  return <Home user={user} onSetUser={onSetUser} />;
-}
+export default HomePage;
