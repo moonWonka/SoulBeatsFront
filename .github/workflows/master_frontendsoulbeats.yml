@@ -45,9 +45,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/master' # Solo ejecuta el deploy en la rama master
+    # Solo desplegamos en master o develop
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     environment:
-      name: 'Production'
+      # Production en master, Staging en develop (con gate de aprobación)
+      name: ${{ github.ref == 'refs/heads/master' && 'Production' || 'Staging' }}
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write
