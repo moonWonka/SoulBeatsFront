@@ -1,1 +1,2 @@
-export const BASE_API_URL = "https://backendsoulbeats-ggeed4cthbcxf9a5.brazilsouth-01.azurewebsites.net";
+// Base URL for backend API obtained from environment variables
+export const BASE_API_URL = import.meta.env.VITE_BACKEND_URL;
