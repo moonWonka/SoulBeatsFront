@@ -1,27 +1,37 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { HomePage } from '../pages/HomePage';
 import { AboutPage } from '../pages/AboutPage';
 import { LoginPage } from '../pages/LoginPage';
 import { SwipePage } from '../pages/SwipePage';
 import ProtectedRoute from './ProtectedRoute';
+import Navbar from '../components/Navbar';
+import MatchesPage from '../pages/MatchesPage'; // Import MatchesPage
+import { AppView } from '../types'; // Assuming AppView is in types.ts
 
-const AppRouter: React.FC = () => {
+// Export AppRouterContent for testing
+export const AppRouterContent: React.FC = () => {
+  const location = useLocation();
+  const [currentView, setCurrentView] = useState<AppView>('swipe');
+  const [matchCount, setMatchCount] = useState<number>(0); // Hardcoded for now
+
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes('/swipe')) {
+      setCurrentView('swipe');
+    } else if (path.includes('/matches')) {
+      setCurrentView('matches');
+    }
+    // Add other view conditions if needed
+  }, [location.pathname]);
+
   return (
-    <Router>
-      <div className="App min-h-screen flex flex-col">
-        {/* Navbar */}
-        <nav className="flex-shrink-0 bg-gray-800 text-white py-4">
-          <ul className="flex justify-center space-x-4">
-            <li><Link to="/" className="hover:text-rose-500">Home</Link></li>
-            <li><Link to="/about" className="hover:text-rose-500">About</Link></li>
-            <li><Link to="/login" className="hover:text-rose-500">Login</Link></li>
-            <li><Link to="/swipe" className="hover:text-rose-500">Swipe</Link></li>
-          </ul>
-        </nav>
+    <div className="App min-h-screen flex flex-col">
+      {/* Navbar */}
+      <Navbar currentView={currentView} matchCount={matchCount} />
 
-        {/* Main Routes */}
-        <div className="flex-grow">
+      {/* Main Routes */}
+      <div className="flex-grow pt-16"> {/* Added pt-16 for padding below fixed navbar */}
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
@@ -34,9 +44,24 @@ const AppRouter: React.FC = () => {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/matches" // New route for matches
+              element={
+                <ProtectedRoute>
+                  <MatchesPage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </div>
       </div>
+  );
+}
+
+const AppRouter: React.FC = () => {
+  return (
+    <Router>
+      <AppRouterContent />
     </Router>
   );
 };
