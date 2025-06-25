@@ -149,23 +149,24 @@ export function Login() {
         setError('Error desconocido al iniciar sesión con Google.');
       }
     }
-  };return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-fuchsia-50 to-pink-50 p-4">
+  };
+  return (
+    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-fuchsia-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white shadow-2xl rounded-xl p-8 md:p-12">
+        <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-xl p-8 md:p-12">
           <div className="flex flex-col items-center mb-8">
             <HeartIcon className="w-12 h-12 text-fuchsia-600 mb-3" />
             <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-pink-600">
               {isRegistering ? 'Crea una cuenta' : 'Explora y Conecta'}
             </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-gray-600 dark:text-gray-300 mt-1">
               {isRegistering ? '¡Únete a nosotros hoy!' : '¡Bienvenido de nuevo!'}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 Correo electrónico
               </label>
               <input
@@ -173,20 +174,20 @@ export function Login() {
                 type="email"
                 required
                 value={email}                onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 sm:text-sm transition-colors"
+                className="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 sm:text-sm transition-colors"
                 placeholder="tucorreo@ejemplo.com"
               />
             </div>
 
             <div className="relative">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 Contraseña
               </label>              <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 required
                 value={password}                onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 sm:text-sm transition-colors pr-10"
+                className="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 sm:text-sm transition-colors pr-10"
                 placeholder="••••••••"
               />
               <button
@@ -202,14 +203,14 @@ export function Login() {
 
             {isRegistering && (
               <div className="relative">
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                   Repite tu contraseña
                 </label>
                 <input
                   id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
                   required
-                  value={confirmPassword}                  onChange={(e) => setConfirmPassword(e.target.value)}                  className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 sm:text-sm transition-colors pr-10"
+                  value={confirmPassword}                  onChange={(e) => setConfirmPassword(e.target.value)}                  className="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 sm:text-sm transition-colors pr-10"
                   placeholder="••••••••"
                   onPaste={(e) => e.preventDefault()}
                 />
@@ -226,7 +227,7 @@ export function Login() {
             )}
 
             {error && (
-              <p className="text-sm text-red-600 bg-red-100 p-2 rounded-md text-center">
+              <p className="text-sm text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900 p-2 rounded-md text-center">
                 {error}
               </p>
             )}
@@ -241,7 +242,7 @@ export function Login() {
             </div>
           </form>
 
-          <div className="mt-8 text-center">            <p className="text-sm text-gray-600">
+          <div className="mt-8 text-center">            <p className="text-sm text-gray-600 dark:text-gray-300">
               {isRegistering ? '¿Ya tienes una cuenta?' : '¿No tienes una cuenta?'}{' '}              <button
                 type="button"
                 onClick={() => setIsRegistering(!isRegistering)}
@@ -253,7 +254,7 @@ export function Login() {
           </div>
         </div>
       </div>
-      <footer className="text-center mt-8 text-gray-600 text-sm">
+      <footer className="text-center mt-8 text-gray-600 dark:text-gray-400 text-sm">
         <p>&copy; {new Date().getFullYear()} SoulBeats</p>
       </footer>
     </div>
