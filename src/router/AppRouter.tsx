@@ -14,11 +14,23 @@ import ProtectedRoute from './ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
 
 const AppRouter: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, loading, logout } = useAuth();
+
+  // Mostrar loading mientras se verifica el estado de autenticación
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-fuchsia-50 to-pink-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-fuchsia-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Router>
-      <div className="App min-h-screen flex flex-col">        {user && (
+      <div className="App min-h-screen flex flex-col">{user && (
           <nav className="flex-shrink-0 bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white py-4 shadow-lg">
             <div className="max-w-6xl mx-auto px-4">
               <div className="flex justify-between items-center">
@@ -31,9 +43,8 @@ const AppRouter: React.FC = () => {
                           ? 'bg-white/20 text-white shadow-lg'
                           : 'text-white/80 hover:text-white hover:bg-white/10'
                       }`
-                    }
-                  >
-                    Dashboard
+                    }                  >
+                    Inicio
                   </NavLink>
                   <NavLink
                     to="/swipe"
@@ -43,9 +54,8 @@ const AppRouter: React.FC = () => {
                           ? 'bg-white/20 text-white shadow-lg'
                           : 'text-white/80 hover:text-white hover:bg-white/10'
                       }`
-                    }
-                  >
-                    Discover
+                    }                  >
+                    Descubrir
                   </NavLink>
                   <NavLink
                     to="/about"
@@ -55,19 +65,16 @@ const AppRouter: React.FC = () => {
                           ? 'bg-white/20 text-white shadow-lg'
                           : 'text-white/80 hover:text-white hover:bg-white/10'
                       }`
-                    }
-                  >
-                    About
+                    }                  >
+                    Acerca de
                   </NavLink>
-                </div>                <div className="flex items-center space-x-4">
-                  <span className="text-white/90 text-sm">
-                    Welcome, {user.email}
+                </div>                <div className="flex items-center space-x-4">                  <span className="text-white/90 text-sm">
+                    Bienvenido, {user.email}
                   </span>
                   <button
                     onClick={logout}
-                    className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 hover:border-white/50 rounded-lg font-medium transition-all duration-200"
-                  >
-                    Logout
+                    className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 hover:border-white/50 rounded-lg font-medium transition-all duration-200"                  >
+                    Cerrar Sesión
                   </button>
                 </div>
               </div>

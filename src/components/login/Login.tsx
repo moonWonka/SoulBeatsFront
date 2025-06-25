@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import HeartIcon from '../icons/HeartIcon';
 import { GradientButton } from '../shared/GradientButton';
 import { OutlineButton } from '../shared/OutlineButton';
@@ -12,6 +12,7 @@ import { useAuth } from '../../context/AuthContext';
 export function Login() {
   const { login, user } = useAuth(); // Usa el contexto para manejar el estado del usuario
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,12 +21,15 @@ export function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Redirect to dashboard if user is already logged in
+  // Get the intended destination from location state, or default to dashboard
+  const from = location.state?.from?.pathname || '/dashboard';
+
+  // Redirect to intended destination if user is already logged in
   useEffect(() => {
     if (user) {
-      navigate('/dashboard', { replace: true });
+      navigate(from, { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, navigate, from]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -56,10 +60,9 @@ export function Login() {
         } else {
           setError('Error al registrarse.');
         }
-      }    } else {
-      try {
+      }    } else {      try {
         await login(email, password); // Usa el método `login` del contexto
-        navigate('/dashboard', { replace: true }); // Redirect to dashboard after successful login
+        navigate(from, { replace: true }); // Redirect to intended destination after successful login
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(`Error al iniciar sesión: ${err.message}`);
@@ -71,11 +74,10 @@ export function Login() {
   };
   const handleGoogleAuth = async () => {
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
+      const provider = new GoogleAuthProvider();      const result = await signInWithPopup(auth, provider);
       const token = await result.user.getIdToken();
       console.log('Usuario autenticado con Google:', result.user);
-      navigate('/dashboard', { replace: true }); // Redirect to dashboard after successful Google auth
+      navigate(from, { replace: true }); // Redirect to intended destination after successful Google auth
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(`Error con Google: ${err.message}`);
