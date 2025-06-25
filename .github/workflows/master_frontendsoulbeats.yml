@@ -31,10 +31,14 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Install dependencies and build
-        run: |
-          npm install
-          npm run build
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test -- --run
+
+      - name: Build application
+        run: npm run build
 
       - name: Upload dist folder only
         uses: actions/upload-artifact@v4
