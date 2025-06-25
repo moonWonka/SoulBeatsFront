@@ -14,7 +14,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
       <div className="relative">
         <img 
           src={profile.imageUrl} 
-          alt={profile.name} 
+          alt={`Carátula de álbum favorito de ${profile.name}`} 
           className="w-full h-64 md:h-72 object-cover"
         />
         <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 bg-gradient-to-t from-fuchsia-900/90 via-fuchsia-800/60 to-transparent">
@@ -30,7 +30,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile }) => {
         <p className="text-gray-700 mb-3 text-xs leading-relaxed line-clamp-2">{profile.bio}</p>
         {profile.interests && profile.interests.length > 0 && (
           <div>
-            <h3 className="text-xs font-semibold text-gray-600 mb-2">Intereses</h3>
+            <h3 className="text-xs font-semibold text-gray-600 mb-2">Géneros Favoritos</h3>
             <div className="flex flex-wrap gap-1">
               {profile.interests.slice(0, 4).map((interest, index) => (
                 <span 

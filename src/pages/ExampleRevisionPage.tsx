@@ -9,14 +9,14 @@ const ExampleRevisionPage: React.FC = () => {
   const [showMatchModal, setShowMatchModal] = useState(false);
   const [matchedProfile, setMatchedProfile] = useState<UserProfile | null>(null);
 
-  // Perfiles de ejemplo
+  // Perfiles de ejemplo con carátulas de álbumes musicales
   const sampleProfiles: UserProfile[] = [
     {
       id: '1',
       name: 'María',
       age: 25,
-      bio: 'Amante de la música indie y los conciertos en vivo. Me encanta descubrir nuevos artistas y compartir experiencias musicales únicas.',
-      imageUrl: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=600&fit=crop&crop=face',
+      bio: 'Amante de la música indie y los conciertos en vivo. Mi canción favorita: "Fluorescent Adolescent" de Arctic Monkeys.',
+      imageUrl: '/descarga.jpg', // Usando la imagen local
       interests: ['Indie Pop', 'Rock Alternativo', 'Conciertos', 'Festivales'],
       location: 'Santiago, Chile'
     },
@@ -24,8 +24,8 @@ const ExampleRevisionPage: React.FC = () => {
       id: '2', 
       name: 'Carlos',
       age: 28,
-      bio: 'Productor musical y DJ. Siempre buscando nuevos sonidos y ritmos para mis sesiones. La música electrónica es mi pasión.',
-      imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&crop=face',
+      bio: 'Productor musical y DJ. Mi álbum favorito es "Discovery" de Daft Punk. Siempre buscando nuevos beats.',
+      imageUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop',
       interests: ['Música Electrónica', 'House', 'Techno', 'Producción Musical'],
       location: 'Valparaíso, Chile'
     },
@@ -33,10 +33,28 @@ const ExampleRevisionPage: React.FC = () => {
       id: '3',
       name: 'Sofía',
       age: 23,
-      bio: 'Cantautora y guitarrista. Me inspiro en el folk y el rock clásico. Busco personas que compartan mi amor por la música auténtica.',
-      imageUrl: 'https://images.unsplash.com/photo-1488716820095-cbe80883c496?w=400&h=600&fit=crop&crop=face',
+      bio: 'Cantautora y guitarrista. "The Sound of Silence" me inspira cada día. Amo la música acústica y auténtica.',
+      imageUrl: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=400&fit=crop',
       interests: ['Folk', 'Rock Clásico', 'Guitarra', 'Composición'],
       location: 'Concepción, Chile'
+    },
+    {
+      id: '4',
+      name: 'Diego',
+      age: 26,
+      bio: 'Fan del reggaeton y la música urbana. "Gasolina" de Daddy Yankee nunca pasa de moda. Siempre con buena vibra.',
+      imageUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop&sat=-100&hue=120',
+      interests: ['Reggaeton', 'Trap', 'Hip Hop', 'Música Urbana'],
+      location: 'Antofagasta, Chile'
+    },
+    {
+      id: '5',
+      name: 'Ana',
+      age: 24,
+      bio: 'Melómana total. Desde Billie Eilish hasta Queen, mi playlist es ecléctica. La música es mi lenguaje universal.',
+      imageUrl: 'https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=400&h=400&fit=crop',
+      interests: ['Pop', 'Rock', 'Indie', 'Clásica'],
+      location: 'La Serena, Chile'
     }
   ];
 
