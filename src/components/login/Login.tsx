@@ -5,7 +5,7 @@ import { GradientButton } from '../shared/GradientButton';
 import { OutlineButton } from '../shared/OutlineButton';
 import { Eye, EyeOff } from 'lucide-react'; // Íconos para mostrar/ocultar
 import { register } from '../../services/backendService'; // Importa el servicio de registro
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
 import { useAuth } from '../../context/AuthContext';
 
@@ -20,9 +20,14 @@ export function Login() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   // Get the intended destination from location state, or default to dashboard
   const from = location.state?.from?.pathname || '/dashboard';
+
+  // Función para detectar dispositivos móviles
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+           (window.innerWidth <= 768);
+  };
 
   // Redirect to intended destination if user is already logged in
   useEffect(() => {
@@ -30,6 +35,27 @@ export function Login() {
       navigate(from, { replace: true });
     }
   }, [user, navigate, from]);
+
+  // Manejar el resultado del redirect de Google Auth (para dispositivos móviles)
+  useEffect(() => {
+    const handleRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          console.log('Usuario autenticado con Google (redirect):', result.user);
+          navigate(from, { replace: true });
+        }
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(`Error con Google: ${err.message}`);
+        } else {
+          setError('Error desconocido al iniciar sesión con Google.');
+        }
+      }
+    };
+
+    handleRedirectResult();
+  }, [navigate, from]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -71,13 +97,22 @@ export function Login() {
         }
       }
     }
-  };
-  const handleGoogleAuth = async () => {
+  };  const handleGoogleAuth = async () => {
     try {
-      const provider = new GoogleAuthProvider();      const result = await signInWithPopup(auth, provider);
-      const token = await result.user.getIdToken();
-      console.log('Usuario autenticado con Google:', result.user);
-      navigate(from, { replace: true }); // Redirect to intended destination after successful Google auth
+      const provider = new GoogleAuthProvider();
+      
+      // Usar redirect en móviles y popup en desktop
+      if (isMobileDevice()) {
+        console.log('Iniciando autenticación Google con redirect (móvil)');
+        await signInWithRedirect(auth, provider);
+        // El resultado se manejará en el useEffect de getRedirectResult
+      } else {
+        console.log('Iniciando autenticación Google con popup (desktop)');
+        const result = await signInWithPopup(auth, provider);
+        const token = await result.user.getIdToken();
+        console.log('Usuario autenticado con Google:', result.user);
+        navigate(from, { replace: true });
+      }
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(`Error con Google: ${err.message}`);
@@ -85,7 +120,7 @@ export function Login() {
         setError('Error desconocido al iniciar sesión con Google.');
       }
     }
-  };  return (
+  };return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-fuchsia-50 to-pink-50 p-4">
       <div className="w-full max-w-md">
         <div className="bg-white shadow-2xl rounded-xl p-8 md:p-12">

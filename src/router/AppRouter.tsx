@@ -30,50 +30,57 @@ const AppRouter: React.FC = () => {
 
   return (
     <Router>
-      <div className="App min-h-screen flex flex-col">{user && (
-          <nav className="flex-shrink-0 bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white py-4 shadow-lg">
-            <div className="max-w-6xl mx-auto px-4">
-              <div className="flex justify-between items-center">
-                <div className="flex space-x-6">
+      <div className="App min-h-screen flex flex-col">        {user && (
+          <nav className="flex-shrink-0 bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white py-3 sm:py-4 shadow-lg">
+            <div className="max-w-6xl mx-auto px-3 sm:px-4">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-3 sm:space-y-0">
+                <div className="flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-6">
                   <NavLink
                     to="/dashboard"
                     className={({ isActive }) =>
-                      `px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
+                      `px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg font-medium transition-colors duration-200 text-sm sm:text-base ${
                         isActive
                           ? 'bg-white/20 text-white shadow-lg'
                           : 'text-white/80 hover:text-white hover:bg-white/10'
                       }`
-                    }                  >
+                    }
+                  >
                     Inicio
                   </NavLink>
                   <NavLink
                     to="/swipe"
                     className={({ isActive }) =>
-                      `px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
+                      `px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg font-medium transition-colors duration-200 text-sm sm:text-base ${
                         isActive
                           ? 'bg-white/20 text-white shadow-lg'
                           : 'text-white/80 hover:text-white hover:bg-white/10'
                       }`
-                    }                  >
+                    }
+                  >
                     Descubrir
                   </NavLink>
                   <NavLink
                     to="/about"
                     className={({ isActive }) =>
-                      `px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
+                      `px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg font-medium transition-colors duration-200 text-sm sm:text-base ${
                         isActive
                           ? 'bg-white/20 text-white shadow-lg'
                           : 'text-white/80 hover:text-white hover:bg-white/10'
                       }`
-                    }                  >
+                    }
+                  >
                     Acerca de
                   </NavLink>
-                </div>                <div className="flex items-center space-x-4">                  <span className="text-white/90 text-sm">
-                    Bienvenido, {user.email}
+                </div>
+                
+                <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-end space-y-2 sm:space-y-0 sm:space-x-4">
+                  <span className="text-white/90 text-xs sm:text-sm text-center sm:text-left">
+                    Bienvenido, {user.email?.split('@')[0] || user.email}
                   </span>
                   <button
                     onClick={logout}
-                    className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 hover:border-white/50 rounded-lg font-medium transition-all duration-200"                  >
+                    className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 hover:border-white/50 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base"
+                  >
                     Cerrar Sesión
                   </button>
                 </div>
