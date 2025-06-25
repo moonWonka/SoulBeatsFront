@@ -55,3 +55,36 @@ export async function register(email: string, password: string): Promise<any> {
     throw error;
   }
 }
+
+/**
+ * Actualiza la información del usuario en el backend.
+ * @param userId - ID del usuario.
+ * @param token - Token de autenticación generado por Firebase.
+ * @param data - Datos del perfil a actualizar.
+ * @returns Respuesta del backend.
+ */
+export async function updateUserInfo(
+  userId: string,
+  token: string,
+  data: Record<string, unknown>
+): Promise<any> {
+  try {
+    const response = await fetch(`${BASE_API_URL}/user/${userId}/info`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al actualizar el perfil');
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+}

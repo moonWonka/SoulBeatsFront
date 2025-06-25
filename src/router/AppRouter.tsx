@@ -12,6 +12,7 @@ import { LoginPage } from '../pages/LoginPage';
 import { SwipePage } from '../pages/SwipePage';
 import UserHomeScreen from '../pages/UserHomeScreen';
 import ExampleRevisionPage from '../pages/ExampleRevisionPage';
+import EditProfilePage from '../pages/EditProfilePage';
 import ProtectedRoute from './ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -149,6 +150,14 @@ const AppRouter: React.FC = () => {
                 element={
                   <ProtectedRoute>
                     <ExampleRevisionPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile/edit"
+                element={
+                  <ProtectedRoute>
+                    <EditProfilePage />
                   </ProtectedRoute>
                 }
               />

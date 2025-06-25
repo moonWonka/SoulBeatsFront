@@ -2,10 +2,12 @@ import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { GradientButton } from '../components/shared/GradientButton';
 import { OutlineButton } from '../components/shared/OutlineButton';
-import { UserCircle2, Settings, Link as LinkIcon } from 'lucide-react'; // Importar iconos necesarios
+import { UserCircle2, Settings, Link as LinkIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const UserHomeScreen: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-full bg-gradient-to-br from-fuchsia-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
@@ -24,7 +26,7 @@ const UserHomeScreen: React.FC = () => {
           </div>
 
           <div className="space-y-4 w-full">
-            <GradientButton onClick={() => console.log('Configurar Perfil clickeado')}>
+            <GradientButton onClick={() => navigate('/profile/edit')}>
               <Settings className="w-5 h-5 mr-2" />
               Configurar Perfil
             </GradientButton>
