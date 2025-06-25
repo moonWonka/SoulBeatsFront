@@ -2,12 +2,12 @@ import { Login } from '../components/login/Login';
 
 export function LoginPage() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col dark:bg-gray-900">
       <header className="flex-shrink-0 bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white py-4 shadow-lg">        <h1 className="text-center text-2xl font-bold">
           Bienvenido a SoulBeats
         </h1>
       </header>
-      <main className="flex-grow flex items-center justify-center bg-gradient-to-br from-fuchsia-50 to-pink-50">
+      <main className="flex-grow flex items-center justify-center bg-gradient-to-br from-fuchsia-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
         <Login />
       </main>
       <footer className="flex-shrink-0 bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white py-4 text-center text-sm">
