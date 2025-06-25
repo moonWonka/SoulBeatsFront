@@ -12,7 +12,7 @@ export function SwipePage() {
         <div className="card-content">
           <img
             src="https://cdn-icons-png.flaticon.com/512/727/727218.png"
-            alt="genre"
+            alt="género"
             className="genre-icon"
           />
           <h2>🎶 Indie Pop</h2>

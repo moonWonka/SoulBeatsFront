@@ -17,7 +17,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, setCurrentView, matchCount
       className={`flex-1 py-3 px-2 text-center transition-colors duration-200 relative ${
         currentView === view ? 'text-rose-500' : 'text-gray-400 hover:text-rose-400'
       }`}
-      aria-label={`Go to ${label}`}
+      aria-label={`Ir a ${label}`}
     >
       <div className="flex flex-col items-center">
         <span className={`text-xs mt-1 font-medium ${currentView === view ? 'text-rose-500' : 'text-gray-500'}`}>
@@ -34,11 +34,10 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, setCurrentView, matchCount
       )}
     </button>
   );
-
   return (
     <nav className="flex w-full border-b border-gray-200 bg-white sticky top-0 z-10">
-      <NavButton view="swipe" label="Discover" />
-      <NavButton view="matches" label="Matches" />
+      <NavButton view="swipe" label="Descubrir" />
+      <NavButton view="matches" label="Coincidencias" />
     </nav>
   );
 };

@@ -8,7 +8,7 @@ describe('Navbar', () => {
     const user = userEvent.setup();
     const setCurrentView = vi.fn();
     render(<Navbar currentView="swipe" setCurrentView={setCurrentView} matchCount={0} />);
-    await user.click(screen.getByRole('button', { name: /Matches/i }));
+    await user.click(screen.getByRole('button', { name: /Coincidencias/i }));
     expect(setCurrentView).toHaveBeenCalledWith('matches' as AppView);
   });
 });
