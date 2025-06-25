@@ -5,7 +5,7 @@ import { GradientButton } from '../shared/GradientButton';
 import { OutlineButton } from '../shared/OutlineButton';
 import { Eye, EyeOff } from 'lucide-react'; // Íconos para mostrar/ocultar
 import { register } from '../../services/backendService'; // Importa el servicio de registro
-import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
 import { useAuth } from '../../context/AuthContext';
 
@@ -78,8 +78,37 @@ export function Login() {
       }
 
       try {
+        // Primero registrar en el backend
         const response = await register(email, password);
-        console.log('Usuario registrado:', response);
+        console.log('Usuario registrado en backend:', response);
+        
+        // Si el backend responde exitosamente, crear cuenta en Firebase
+        if (response.statusCode === 200) {
+          try {
+            // Crear cuenta en Firebase Auth
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            console.log('Usuario creado en Firebase:', userCredential.user);
+            
+            // El contexto AuthContext debería detectar automáticamente el nuevo usuario
+            // y redirigir, pero por si acaso, navegamos manualmente
+            navigate(from, { replace: true });
+          } catch (firebaseError: unknown) {
+            // Si falla Firebase pero el backend fue exitoso, intentar hacer login
+            console.log('Error en Firebase, intentando login:', firebaseError);
+            try {
+              await login(email, password);
+              navigate(from, { replace: true });
+            } catch (loginError: unknown) {
+              if (loginError instanceof Error) {
+                setError(`Cuenta creada pero error al iniciar sesión: ${loginError.message}`);
+              } else {
+                setError('Cuenta creada. Por favor, inicia sesión manualmente.');
+              }
+            }
+          }
+        } else {
+          setError('Error inesperado al registrarse.');
+        }
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message || 'Error al registrarse.');
