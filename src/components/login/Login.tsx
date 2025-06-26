@@ -155,8 +155,14 @@ export function Login() {
       <div className="w-full max-w-md">
         <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-xl p-8 md:p-12">
           <div className="flex flex-col items-center mb-8">
-            <HeartIcon className="w-12 h-12 text-fuchsia-600 mb-3" />
-            <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-pink-600">
+            <HeartIcon className="w-12 h-12 text-fuchsia-600 dark:text-violet-400 mb-3" />
+            <h1 className="text-3xl font-bold text-transparent bg-clip-text" 
+                style={{
+                  background: 'linear-gradient(to right, var(--color-primary-from), var(--color-primary-to))',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                }}>
               {isRegistering ? 'Crea una cuenta' : 'Explora y Conecta'}
             </h1>
             <p className="text-gray-600 dark:text-gray-300 mt-1">
@@ -173,8 +179,9 @@ export function Login() {
                 id="email"
                 type="email"
                 required
-                value={email}                onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 sm:text-sm transition-colors"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 dark:focus:ring-violet-500 focus:border-fuchsia-500 dark:focus:border-violet-500 sm:text-sm transition-colors"
                 placeholder="tucorreo@ejemplo.com"
               />
             </div>
@@ -182,18 +189,20 @@ export function Login() {
             <div className="relative">
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 Contraseña
-              </label>              <input
+              </label>
+              <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 required
-                value={password}                onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 sm:text-sm transition-colors pr-10"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 dark:focus:ring-violet-500 focus:border-fuchsia-500 dark:focus:border-violet-500 sm:text-sm transition-colors pr-10"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-10 right-3 text-gray-500 hover:text-fuchsia-600"
+                className="absolute inset-y-10 right-3 text-gray-500 dark:text-gray-400 hover:text-fuchsia-600 dark:hover:text-violet-400"
                 aria-label="Mostrar u ocultar contraseña"
                 title={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
               >
@@ -210,14 +219,16 @@ export function Login() {
                   id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
                   required
-                  value={confirmPassword}                  onChange={(e) => setConfirmPassword(e.target.value)}                  className="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 sm:text-sm transition-colors pr-10"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="appearance-none block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 dark:focus:ring-violet-500 focus:border-fuchsia-500 dark:focus:border-violet-500 sm:text-sm transition-colors pr-10"
                   placeholder="••••••••"
                   onPaste={(e) => e.preventDefault()}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute inset-y-10 right-3 flex text-gray-500 hover:text-fuchsia-600"
+                  className="absolute inset-y-10 right-3 flex text-gray-500 dark:text-gray-400 hover:text-fuchsia-600 dark:hover:text-violet-400"
                   aria-label="Mostrar u ocultar confirmación"
                   title={showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                 >
@@ -227,7 +238,7 @@ export function Login() {
             )}
 
             {error && (
-              <p className="text-sm text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900 p-2 rounded-md text-center">
+              <p className="text-sm text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30 p-2 rounded-md text-center">
                 {error}
               </p>
             )}
@@ -242,11 +253,13 @@ export function Login() {
             </div>
           </form>
 
-          <div className="mt-8 text-center">            <p className="text-sm text-gray-600 dark:text-gray-300">
-              {isRegistering ? '¿Ya tienes una cuenta?' : '¿No tienes una cuenta?'}{' '}              <button
+          <div className="mt-8 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              {isRegistering ? '¿Ya tienes una cuenta?' : '¿No tienes una cuenta?'}{' '}
+              <button
                 type="button"
                 onClick={() => setIsRegistering(!isRegistering)}
-                className="font-medium text-fuchsia-600 hover:text-fuchsia-500"
+                className="font-medium text-fuchsia-600 dark:text-violet-400 hover:text-fuchsia-500 dark:hover:text-violet-300"
               >
                 {isRegistering ? 'Inicia Sesión' : 'Regístrate'}
               </button>

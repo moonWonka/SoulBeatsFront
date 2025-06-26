@@ -20,7 +20,8 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('theme')
       if (stored) return stored === 'dark'
-      return window.matchMedia('(prefers-color-scheme: dark)').matches
+      // Por defecto siempre modo claro (false), no detectar preferencias del sistema
+      return false
     }
     return false
   })
@@ -34,9 +35,14 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       root.classList.remove('dark')
       localStorage.setItem('theme', 'light')
     }
+    
+    // Debug: verificar que las clases se estén aplicando correctamente
+    console.log('Theme applied:', darkMode ? 'dark' : 'light', 'HTML classes:', root.className)
   }, [darkMode])
 
-  const toggleDarkMode = () => setDarkMode((prev) => !prev)
+  const toggleDarkMode = () => {
+    setDarkMode((prev) => !prev);
+  };
 
   return (
     <ThemeContext.Provider value={{ darkMode, toggleDarkMode }}>

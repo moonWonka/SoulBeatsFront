@@ -83,14 +83,14 @@ const ExampleRevisionPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-fuchsia-50 via-pink-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 py-6 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-fuchsia-500 via-pink-400 to-fuchsia-600 py-6 px-4">
       <div className="max-w-md mx-auto">
-        <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-200 mb-6">
+        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Componentes Revisados
         </h1>
         
         <div className="text-center mb-4">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+          <span className="text-sm text-gray-600">
             Perfil {currentProfileIndex + 1} de {sampleProfiles.length}
           </span>
         </div>
@@ -108,16 +108,16 @@ const ExampleRevisionPage: React.FC = () => {
         />
 
         {/* Instructions */}
-        <div className="mt-8 p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur rounded-xl shadow-lg">
-          <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 mb-2">
+        <div className="mt-8 p-4 bg-white/80 backdrop-blur rounded-xl shadow-lg">
+          <h3 className="text-base font-semibold text-gray-800 mb-2">
             Componentes Implementados:
           </h3>
-          <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+          <ul className="text-xs text-gray-600 space-y-1">
             <li>• <span className="font-medium text-fuchsia-600">ProfileCard</span>: Tarjeta de perfil compacta</li>
             <li>• <span className="font-medium text-fuchsia-600">ActionButtons</span>: Botones de acción optimizados</li>
             <li>• <span className="font-medium text-fuchsia-600">MatchModal</span>: Modal de match</li>
           </ul>
-          <div className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+          <div className="mt-3 text-xs text-gray-500">
             ✨ Colores fuchsia/rosa, textos en español y responsivo
           </div>
         </div>
@@ -126,7 +126,7 @@ const ExampleRevisionPage: React.FC = () => {
         <div className="mt-4 text-center">
           <button
             onClick={() => setCurrentProfileIndex(0)}
-            className="px-4 py-2 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors duration-200"
+            className="px-4 py-2 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors duration-200"
           >
             Reiniciar Demo
           </button>

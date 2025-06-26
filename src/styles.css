@@ -1,1 +1,72 @@
 @import "tailwindcss";
+
+/* Variables CSS para el sistema de colores */
+:root {
+  /* Modo claro - Colores fuchsia/rosa más intensos como en la imagen original */
+  --color-primary-from: #db2777; /* pink-600 - más intenso */
+  --color-primary-to: #d946ef; /* fuchsia-500 - más intenso */
+  --color-primary-hover-from: #be185d; /* pink-700 */
+  --color-primary-hover-to: #c026d3; /* fuchsia-600 */
+  --color-primary-focus: #db2777; /* pink-600 */
+  
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #fafafa;
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #6b7280;
+  --color-border: #e5e7eb;
+  
+  --color-card-bg: #ffffff;
+  --color-card-border: #f3f4f6;
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  
+  /* Gradiente de fondo principal más intenso como en la imagen */
+  --color-bg-gradient-from: #c026d3; /* fuchsia-600 */
+  --color-bg-gradient-via: #ec4899; /* pink-500 */
+  --color-bg-gradient-to: #d946ef; /* fuchsia-500 */
+}
+
+/* Modo oscuro - Colores más neutros */
+.dark {
+  --color-primary-from: #8b5cf6; /* violet-500 */
+  --color-primary-to: #a78bfa; /* violet-400 */
+  --color-primary-hover-from: #7c3aed; /* violet-600 */
+  --color-primary-hover-to: #8b5cf6; /* violet-500 */
+  --color-primary-focus: #8b5cf6; /* violet-500 */
+  
+  --color-bg-primary: #111827;
+  --color-bg-secondary: #1f2937;
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d1d5db;
+  --color-border: #374151;
+  
+  --color-card-bg: #1f2937;
+  --color-card-border: #374151;
+  --color-shadow: rgba(0, 0, 0, 0.3);
+  
+  /* Gradiente de fondo principal para dark mode */
+  --color-bg-gradient-from: #111827; /* gray-900 */
+  --color-bg-gradient-via: #374151; /* gray-700 */
+  --color-bg-gradient-to: #111827; /* gray-900 */
+}
+
+/* Clases utilitarias personalizadas */
+@layer utilities {
+  .bg-primary-gradient {
+    background: linear-gradient(to right, var(--color-primary-from), var(--color-primary-to));
+  }
+  
+  .bg-primary-gradient-hover:hover {
+    background: linear-gradient(to right, var(--color-primary-hover-from), var(--color-primary-hover-to));
+  }
+  
+  .bg-main-gradient {
+    background: linear-gradient(to bottom right, var(--color-bg-gradient-from), var(--color-bg-gradient-via), var(--color-bg-gradient-to));
+  }
+  
+  .text-primary-gradient {
+    background: linear-gradient(to right, var(--color-primary-from), var(--color-primary-to));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
