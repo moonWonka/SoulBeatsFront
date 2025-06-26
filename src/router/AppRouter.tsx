@@ -12,6 +12,7 @@ import { LoginPage } from '../pages/LoginPage';
 import { SwipePage } from '../pages/SwipePage';
 import UserHomeScreen from '../pages/UserHomeScreen';
 import ExampleRevisionPage from '../pages/ExampleRevisionPage';
+import Demo2Page from '../pages/Demo2Page';
 import EditProfilePage from '../pages/EditProfilePage';
 import ProtectedRoute from './ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
@@ -89,6 +90,18 @@ const AppRouter: React.FC = () => {
                   >
                     Demo
                   </NavLink>
+                  <NavLink
+                    to="/demo2"
+                    className={({ isActive }) =>
+                      `px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg font-medium transition-colors duration-200 text-sm sm:text-base ${
+                        isActive
+                          ? 'bg-white/20 text-white shadow-lg'
+                          : 'text-white/80 hover:text-white hover:bg-white/10'
+                      }`
+                    }
+                  >
+                    Demo2
+                  </NavLink>
                 </div>
                 
                 <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-end space-y-2 sm:space-y-0 sm:space-x-4">
@@ -154,6 +167,14 @@ const AppRouter: React.FC = () => {
                 element={
                   <ProtectedRoute>
                     <ExampleRevisionPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/demo2"
+                element={
+                  <ProtectedRoute>
+                    <Demo2Page />
                   </ProtectedRoute>
                 }
               />
