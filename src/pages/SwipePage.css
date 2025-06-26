@@ -1,9 +1,21 @@
-.page-container {
+.page-c/* Modo claro - degradado fuchsia/rosa */
+:root .page-container {
+  background: linear-gradient(to bottom right, #d946ef, #ec4899, #d946ef);
+}iner {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to bottom right, #9333ea, #ec4899);
+}
+
+/* Modo claro - degradado fuchsia/rosa */
+:root .page-container {
+  background: linear-gradient(to bottom right, #e879f9, #f472b6, #f97316);
+}
+
+/* Modo oscuro - degradado violeta/gris */
+.dark .page-container {
+  background: linear-gradient(to bottom right, #6b21a8, #7c3aed, #374151);
 }
 
 .card-content {
