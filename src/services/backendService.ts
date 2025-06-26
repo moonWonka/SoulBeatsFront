@@ -69,7 +69,7 @@ export async function updateUserInfo(
   data: Record<string, unknown>
 ): Promise<any> {
   try {
-    const response = await fetch(`${BASE_API_URL}/user/${userId}/info`, {
+    const response = await fetch(`${BASE_API_URL}/user/${userId}/profile`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
