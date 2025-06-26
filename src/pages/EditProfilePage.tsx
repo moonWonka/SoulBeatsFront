@@ -61,14 +61,14 @@ const EditProfilePage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-fuchsia-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-fuchsia-500 via-pink-400 to-fuchsia-600 dark:from-gray-900 dark:to-gray-800">
         <p className="text-gray-800 dark:text-gray-200">Cargando...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-fuchsia-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center py-8 px-4">
+    <div className="min-h-full bg-gradient-to-br from-fuchsia-500 via-pink-400 to-fuchsia-600 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center py-8 px-4">
       <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 text-center">Editar Perfil</h2>
         {error && <p className="text-sm text-red-600 dark:text-red-400 text-center">{error}</p>}

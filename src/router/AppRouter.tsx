@@ -35,7 +35,7 @@ const AppRouter: React.FC = () => {
 
   return (
     <Router>
-      <div className="App min-h-screen flex flex-col dark:bg-gray-900">
+      <div className="App min-h-screen flex flex-col bg-gradient-to-br from-fuchsia-500 via-pink-400 to-fuchsia-600 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         {user && (
           <nav className="flex-shrink-0 bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white py-3 sm:py-4 shadow-lg">
             <div className="max-w-6xl mx-auto px-3 sm:px-4">
@@ -96,9 +96,13 @@ const AppRouter: React.FC = () => {
                     Bienvenido, {user.email?.split('@')[0] || user.email}
                   </span>
                   <button
-                    onClick={toggleDarkMode}
-                    className="p-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 hover:border-white/50 rounded-lg transition-colors"
-                    aria-label="Toggle dark mode"
+                    onClick={() => {
+                      console.log('Dark mode button clicked, current state:', darkMode);
+                      toggleDarkMode();
+                    }}
+                    className="p-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 hover:border-white/50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white/20"
+                    aria-label={`Cambiar a modo ${darkMode ? 'claro' : 'oscuro'}`}
+                    title={`Cambiar a modo ${darkMode ? 'claro' : 'oscuro'}`}
                   >
                     {darkMode ? <Sun size={18} /> : <Moon size={18} />}
                   </button>

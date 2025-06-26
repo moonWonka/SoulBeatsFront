@@ -20,7 +20,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-10 text-center max-w-md w-full max-h-[90vh] overflow-y-auto transform transition-all duration-500 ease-out">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 md:p-10 text-center max-w-md w-full max-h-[90vh] overflow-y-auto transform transition-all duration-500 ease-out">
         {/* Icono de corazones */}
         <div className="flex justify-center mb-4">
           <div className="relative">
@@ -33,8 +33,8 @@ const MatchModal: React.FC<MatchModalProps> = ({
           ¡Es un Match!
         </h2>
         
-        <p className="text-gray-600 mb-8 text-base md:text-lg leading-relaxed">
-          ¡Tú y <span className="font-semibold text-fuchsia-600">{matchedProfile.name}</span> se han gustado mutuamente!
+        <p className="text-gray-600 dark:text-gray-300 mb-8 text-base md:text-lg leading-relaxed">
+          ¡Tú y <span className="font-semibold text-fuchsia-600 dark:text-fuchsia-400">{matchedProfile.name}</span> se han gustado mutuamente!
         </p>
         
         <div className="flex justify-center items-center space-x-4 md:space-x-6 mb-8">
@@ -69,7 +69,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
         <div className="space-y-3">
           <button
             onClick={onClose}
-            className="w-full bg-gradient-to-r from-fuchsia-500 to-pink-500 hover:from-fuchsia-600 hover:to-pink-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-fuchsia-300 focus:ring-opacity-50 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95"
+            className="w-full bg-gradient-to-r from-fuchsia-500 to-pink-500 hover:from-fuchsia-600 hover:to-pink-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-fuchsia-300 dark:focus:ring-fuchsia-600 focus:ring-opacity-50 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95"
             aria-label="Continuar descubriendo perfiles"
           >
             Continuar Descubriendo
@@ -77,7 +77,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
           
           <button
             onClick={onClose}
-            className="w-full border-2 border-gray-200 hover:border-gray-300 text-gray-600 hover:text-gray-700 font-medium py-2 px-6 rounded-lg focus:outline-none focus:ring-4 focus:ring-gray-200 focus:ring-opacity-50 transition-all duration-200 ease-in-out"
+            className="w-full border-2 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 text-gray-600 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200 font-medium py-2 px-6 rounded-lg focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-600 focus:ring-opacity-50 transition-all duration-200 ease-in-out"
             aria-label="Cerrar modal"
           >
             Cerrar
