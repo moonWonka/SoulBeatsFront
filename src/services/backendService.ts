@@ -1,5 +1,5 @@
-// Obtiene la URL base desde las variables de entorno de Vite
-const BASE_API_URL = import.meta.env.VITE_BACKEND_URL;
+// Base URL is centralized in src/config/config.ts
+import { BASE_API_URL } from '../config/config';
 
 /**
  * Obtiene la información del usuario desde el backend.
