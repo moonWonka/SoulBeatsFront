@@ -49,8 +49,8 @@ export function Login() {
             const token = await result.user.getIdToken();
             const userData = {
               email: result.user.email!,
-              displayName: result.user.displayName,
-              photoURL: result.user.photoURL,
+              displayName: result.user.displayName ?? undefined,
+              photoURL: result.user.photoURL ?? undefined,
               uid: result.user.uid
             };
             
@@ -163,8 +163,8 @@ export function Login() {
         try {
           const userData = {
             email: result.user.email!,
-            displayName: result.user.displayName,
-            photoURL: result.user.photoURL,
+            displayName: result.user.displayName ?? undefined,
+            photoURL: result.user.photoURL ?? undefined,
             uid: result.user.uid
           };
           
