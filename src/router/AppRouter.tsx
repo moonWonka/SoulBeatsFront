@@ -13,6 +13,7 @@ import { SwipePage } from '../pages/SwipePage';
 import UserHomeScreen from '../pages/UserHomeScreen';
 import ExampleRevisionPage from '../pages/ExampleRevisionPage';
 import EditProfilePage from '../pages/EditProfilePage';
+import MusicPreferencesPage from '../pages/MusicPreferencesPage';
 import ProtectedRoute from './ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -89,6 +90,18 @@ const AppRouter: React.FC = () => {
                   >
                     Demo
                   </NavLink>
+                  <NavLink
+                    to="/music-preferences"
+                    className={({ isActive }) =>
+                      `px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg font-medium transition-colors duration-200 text-sm sm:text-base ${
+                        isActive
+                          ? 'bg-white/20 text-white shadow-lg'
+                          : 'text-white/80 hover:text-white hover:bg-white/10'
+                      }`
+                    }
+                  >
+                    Música
+                  </NavLink>
                 </div>
                 
                 <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-end space-y-2 sm:space-y-0 sm:space-x-4">
@@ -162,6 +175,14 @@ const AppRouter: React.FC = () => {
                 element={
                   <ProtectedRoute>
                     <EditProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/music-preferences"
+                element={
+                  <ProtectedRoute>
+                    <MusicPreferencesPage />
                   </ProtectedRoute>
                 }
               />
