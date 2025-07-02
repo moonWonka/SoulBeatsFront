@@ -53,9 +53,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           try {
             const token = await currentUser.getIdToken();
             const userData = {
-              email: currentUser.email!,
-              displayName: currentUser.displayName,
-              photoURL: currentUser.photoURL,
+              email: currentUser.email || '',
+              displayName: currentUser.displayName || undefined,
+              photoURL: currentUser.photoURL || undefined,
               uid: currentUser.uid
             };
             

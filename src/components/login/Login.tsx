@@ -48,9 +48,9 @@ export function Login() {
           try {
             const token = await result.user.getIdToken();
             const userData = {
-              email: result.user.email!,
-              displayName: result.user.displayName,
-              photoURL: result.user.photoURL,
+              email: result.user.email || '',
+              displayName: result.user.displayName || '',
+              photoURL: result.user.photoURL || '',
               uid: result.user.uid
             };
             
@@ -162,9 +162,9 @@ export function Login() {
         // Registrar usuario en el backend
         try {
           const userData = {
-            email: result.user.email!,
-            displayName: result.user.displayName,
-            photoURL: result.user.photoURL,
+            email: result.user.email || '',
+            displayName: result.user.displayName || '',
+            photoURL: result.user.photoURL || '',
             uid: result.user.uid
           };
           
