@@ -57,6 +57,45 @@ export async function register(email: string, password: string): Promise<any> {
 }
 
 /**
+ * Registra o actualiza un usuario autenticado con Google en el backend.
+ * @param token - Token de autenticación generado por Firebase.
+ * @param userData - Datos del usuario de Google (email, name, photoURL, etc.).
+ * @returns Respuesta del backend.
+ */
+export async function registerGoogleUser(token: string, userData: {
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+  uid: string;
+}): Promise<any> {
+  try {
+    const response = await fetch(`${BASE_API_URL}/auth/google`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'accept': 'application/json'
+      },
+      body: JSON.stringify({
+        userEmail: userData.email,
+        displayName: userData.displayName,
+        photoURL: userData.photoURL,
+        firebaseUid: userData.uid
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Error al registrar usuario con Google.');
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
  * Actualiza la información del usuario en el backend.
  * @param userId - ID del usuario.
  * @param token - Token de autenticación generado por Firebase.

@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
+import { registerGoogleUser } from '../services/backendService';
 
 interface AuthContextProps {
   user: User | null;
@@ -43,7 +44,31 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        // Si es un usuario de Google (no tiene información de proveedor de email/password)
+        const isGoogleUser = currentUser.providerData.some(provider => provider.providerId === 'google.com');
+        
+        if (isGoogleUser) {
+          try {
+            const token = await currentUser.getIdToken();
+            const userData = {
+              email: currentUser.email!,
+              displayName: currentUser.displayName,
+              photoURL: currentUser.photoURL,
+              uid: currentUser.uid
+            };
+            
+            console.log('Sincronizando usuario Google con backend:', userData);
+            await registerGoogleUser(token, userData);
+            console.log('Usuario Google sincronizado con backend');
+          } catch (backendError) {
+            console.log('Error al sincronizar usuario Google con backend (posiblemente ya existe):', backendError);
+            // No impedimos el login si falla la sincronización con backend
+          }
+        }
+      }
+      
       setUser(currentUser);
       setLoading(false);
     });

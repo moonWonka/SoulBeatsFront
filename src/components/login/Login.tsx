@@ -4,7 +4,7 @@ import HeartIcon from '../icons/HeartIcon';
 import { GradientButton } from '../shared/GradientButton';
 import { OutlineButton } from '../shared/OutlineButton';
 import { Eye, EyeOff } from 'lucide-react'; // Íconos para mostrar/ocultar
-import { register } from '../../services/backendService'; // Importa el servicio de registro
+import { register, registerGoogleUser } from '../../services/backendService';
 import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
 import { useAuth } from '../../context/AuthContext';
@@ -43,6 +43,25 @@ export function Login() {
         const result = await getRedirectResult(auth);
         if (result) {
           console.log('Usuario autenticado con Google (redirect):', result.user);
+          
+          // Registrar usuario en el backend
+          try {
+            const token = await result.user.getIdToken();
+            const userData = {
+              email: result.user.email!,
+              displayName: result.user.displayName,
+              photoURL: result.user.photoURL,
+              uid: result.user.uid
+            };
+            
+            console.log('Registrando usuario en backend (redirect):', userData);
+            await registerGoogleUser(token, userData);
+            console.log('Usuario registrado exitosamente en backend (redirect)');
+          } catch (backendError) {
+            console.log('Error al registrar en backend (redirect, usuario posiblemente ya existe):', backendError);
+            // Continuamos aunque falle el registro en backend, ya que el usuario está autenticado en Firebase
+          }
+          
           navigate(from, { replace: true });
         }
       } catch (err: unknown) {
@@ -139,6 +158,24 @@ export function Login() {
         console.log('Iniciando autenticación Google con popup (desktop)');
         const result = await signInWithPopup(auth, provider);
         const token = await result.user.getIdToken();
+        
+        // Registrar usuario en el backend
+        try {
+          const userData = {
+            email: result.user.email!,
+            displayName: result.user.displayName,
+            photoURL: result.user.photoURL,
+            uid: result.user.uid
+          };
+          
+          console.log('Registrando usuario en backend:', userData);
+          await registerGoogleUser(token, userData);
+          console.log('Usuario registrado exitosamente en backend');
+        } catch (backendError) {
+          console.log('Error al registrar en backend (usuario posiblemente ya existe):', backendError);
+          // Continuamos aunque falle el registro en backend, ya que el usuario está autenticado en Firebase
+        }
+        
         console.log('Usuario autenticado con Google:', result.user);
         navigate(from, { replace: true });
       }
