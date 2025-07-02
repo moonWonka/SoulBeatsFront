@@ -7,9 +7,9 @@ const BASE_API_URL = import.meta.env.VITE_BACKEND_URL;
  * @param token - Token de autenticación generado por Firebase.
  * @returns Información del usuario.
  */
-export async function getUserInfo(userId: string, token: string): Promise<any> {
+export async function getUserInfo(userId: string, token: string): Promise<import('../types').GetUserInfoResponse> {
   try {
-    const response = await fetch(`${BASE_API_URL}/user/${userId}/info`, {
+    const response = await fetch(`${BASE_API_URL}/User/${userId}/info`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -250,22 +250,28 @@ export async function updateArtistPreferences(
  * Actualiza la información del usuario en el backend.
  * @param userId - ID del usuario.
  * @param token - Token de autenticación generado por Firebase.
- * @param data - Datos del perfil a actualizar.
+ * @param profileData - Datos del perfil a actualizar según especificación OpenAPI.
  * @returns Respuesta del backend.
  */
 export async function updateUserInfo(
   userId: string,
   token: string,
-  data: Record<string, unknown>
-): Promise<any> {
+  profileData: import('../types').UpdateUserProfileRequest
+): Promise<import('../types').UpdateUserProfileResponse> {
   try {
-    const response = await fetch(`${BASE_API_URL}/user/${userId}/profile`, {
+    // Ensure userId is included in the request body as per API spec
+    const requestBody: import('../types').UpdateUserProfileRequest = {
+      userId,
+      ...profileData
+    };
+
+    const response = await fetch(`${BASE_API_URL}/User/${userId}/profile`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {

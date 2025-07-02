@@ -84,3 +84,27 @@ export interface UpdateArtistPreferencesRequest {
 export interface UpdatePreferencesResponse extends BaseResponse {
   updatedCount: number;
 }
+
+// User Profile Update Types based on OpenAPI specification
+export interface UpdateUserProfileRequest {
+  userId?: string;
+  displayName?: string;
+  email?: string;
+  age?: number;
+  bio?: string;
+  favoriteGenres?: string; // Comma-separated string
+  profilePictureUrl?: string;
+}
+
+export interface UpdateUserProfileResponse extends BaseResponse {
+  // No additional fields beyond BaseResponse according to spec
+}
+
+export interface GetUserInfoResponse extends BaseResponse {
+  id?: string;
+  userName?: string;
+  email?: string;
+  fullName?: string;
+  phoneNumber?: string;
+  role?: string;
+}
