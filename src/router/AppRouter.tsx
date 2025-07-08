@@ -10,6 +10,7 @@ import {
 import { AboutPage } from '../pages/AboutPage';
 import { LoginPage } from '../pages/LoginPage';
 import { SwipePage } from '../pages/SwipePage';
+import SpotifyCallbackPage from '../pages/SpotifyCallbackPage'; // Import the new page
 import UserHomeScreen from '../pages/UserHomeScreen';
 import ExampleRevisionPage from '../pages/ExampleRevisionPage';
 import EditProfilePage from '../pages/EditProfilePage';
@@ -132,64 +133,64 @@ const AppRouter: React.FC = () => {
         )}
 
         <div className="flex-grow">
-          {!user ? (
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="*" element={<Navigate to="/login" />} />
-            </Routes>          ) : (
-            <Routes>
-              <Route 
-                path="/dashboard" 
-                element={
-                  <ProtectedRoute>
-                    <UserHomeScreen />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/about" 
-                element={
-                  <ProtectedRoute>
-                    <AboutPage />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route
-                path="/swipe"
-                element={
-                  <ProtectedRoute>
-                    <SwipePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/revision"
-                element={
-                  <ProtectedRoute>
-                    <ExampleRevisionPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/profile/edit"
-                element={
-                  <ProtectedRoute>
-                    <EditProfilePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/music-preferences"
-                element={
-                  <ProtectedRoute>
-                    <MusicPreferencesPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
-            </Routes>
-          )}
+          <Routes>
+            {/* Public routes */}
+            <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/dashboard" />} />
+            <Route path="/callback" element={<SpotifyCallbackPage />} />
+
+            {/* Protected Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <UserHomeScreen />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <ProtectedRoute>
+                  <AboutPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/swipe"
+              element={
+                <ProtectedRoute>
+                  <SwipePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/revision"
+              element={
+                <ProtectedRoute>
+                  <ExampleRevisionPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile/edit"
+              element={
+                <ProtectedRoute>
+                  <EditProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/music-preferences"
+              element={
+                <ProtectedRoute>
+                  <MusicPreferencesPage />
+                </ProtectedRoute>
+              }
+            />
+            {/* Fallback routes */}
+            <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
+            <Route path="*" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
+          </Routes>
         </div>
       </div>
     </Router>

@@ -8,6 +8,7 @@ import { register, registerGoogleUser } from '../../services/backendService';
 import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
 import { useAuth } from '../../context/AuthContext';
+import { SPOTIFY_CLIENT_ID, SPOTIFY_REDIRECT_URI } from '../../config/config';
 
 export function Login() {
   const { login, user } = useAuth(); // Usa el contexto para manejar el estado del usuario
@@ -145,7 +146,14 @@ export function Login() {
         }
       }
     }
-  };  const handleGoogleAuth = async () => {
+  };
+
+  const handleSpotifyAuth = () => {
+    const spotifyAuthUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(SPOTIFY_REDIRECT_URI)}&scope=${encodeURIComponent('user-read-private user-read-email')}`;
+    window.location.href = spotifyAuthUrl;
+  };
+
+  const handleGoogleAuth = async () => {
     try {
       const provider = new GoogleAuthProvider();
       
@@ -286,6 +294,9 @@ export function Login() {
               </GradientButton>
               <OutlineButton onClick={handleGoogleAuth}>
                 {isRegistering ? 'Registrarse con Google' : 'Iniciar Sesión con Google'}
+              </OutlineButton>
+              <OutlineButton onClick={handleSpotifyAuth}>
+                {isRegistering ? 'Registrarse con Spotify' : 'Iniciar Sesión con Spotify'}
               </OutlineButton>
             </div>
           </form>
