@@ -1,27 +1,13 @@
-import './SwipePage.css'
-import { SwipeCard } from '../components/swipe'
+import React from 'react';
+import { Chatbot } from '../components/chatbot/Chatbot'; // Adjusted path
+import './SwipePage.css'; // Keep if it contains styles relevant to the page layout, otherwise can be cleaned up later
 
-export function SwipePage() {
-  const handleSwipe = (direction: 'left' | 'right') => {
-    console.log(`Swiped ${direction}`)
-  }
-
+export const SwipePage: React.FC = () => {
   return (
-    <div className="page-container">
-      <SwipeCard onSwipe={handleSwipe}>
-        <div className="card-content">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/727/727218.png"
-            alt="género"
-            className="genre-icon"
-          />
-          <h2>🎶 Indie Pop</h2>
-          <p>Conecta con amantes de la música alternativa y sonidos suaves.</p>
-        </div>
-      </SwipeCard>
-
+    <div className="page-container swipe-page-container"> {/* Added a specific class for potential styling */}
+      <Chatbot />
     </div>
-  )
-}
+  );
+};
 
-export default SwipePage
+export default SwipePage;
