@@ -7,9 +7,9 @@ const BASE_API_URL = import.meta.env.VITE_BACKEND_URL;
  * @param token - Token de autenticación generado por Firebase.
  * @returns Información del usuario.
  */
-export async function getUserInfo(userId: string, token: string): Promise<any> {
+export async function getUserInfo(userId: string, token: string): Promise<import('../types').GetUserInfoResponse> {
   try {
-    const response = await fetch(`${BASE_API_URL}/user/${userId}/info`, {
+    const response = await fetch(`${BASE_API_URL}/User/${userId}/info`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -96,25 +96,182 @@ export async function registerGoogleUser(token: string, userData: {
 }
 
 /**
+ * Obtiene la lista de géneros musicales disponibles.
+ * @param token - Token de autenticación generado por Firebase.
+ * @returns Lista de géneros musicales.
+ */
+export async function getGenres(token: string): Promise<import('../types').GetGenresResponse> {
+  try {
+    const response = await fetch(`${BASE_API_URL}/music/genres`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al obtener géneros musicales');
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Obtiene los artistas de un género específico.
+ * @param genreId - ID del género musical.
+ * @param token - Token de autenticación generado por Firebase.
+ * @returns Lista de artistas del género.
+ */
+export async function getArtistsByGenre(genreId: number, token: string): Promise<import('../types').GetArtistsByGenreResponse> {
+  try {
+    const response = await fetch(`${BASE_API_URL}/music/genres/${genreId}/artists`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al obtener artistas del género');
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Obtiene las preferencias musicales del usuario.
+ * @param token - Token de autenticación generado por Firebase.
+ * @returns Preferencias musicales del usuario.
+ */
+export async function getUserPreferences(token: string): Promise<import('../types').GetUserPreferencesResponse> {
+  try {
+    const response = await fetch(`${BASE_API_URL}/music/preferences`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al obtener preferencias del usuario');
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Actualiza las preferencias de géneros del usuario.
+ * @param firebaseUid - UID del usuario en Firebase.
+ * @param preferences - Array de preferencias de géneros con nivel 1-5.
+ * @param token - Token de autenticación generado por Firebase.
+ * @returns Respuesta del backend.
+ */
+export async function updateGenrePreferences(
+  firebaseUid: string,
+  preferences: import('../types').GenrePreferenceDto[],
+  token: string
+): Promise<import('../types').UpdatePreferencesResponse> {
+  try {
+    const response = await fetch(`${BASE_API_URL}/music/preferences/genres`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        firebaseUid,
+        preferences
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al actualizar preferencias de géneros');
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Actualiza las preferencias de artistas del usuario.
+ * @param firebaseUid - UID del usuario en Firebase.
+ * @param preferences - Array de preferencias de artistas con nivel 1-5.
+ * @param token - Token de autenticación generado por Firebase.
+ * @returns Respuesta del backend.
+ */
+export async function updateArtistPreferences(
+  firebaseUid: string,
+  preferences: import('../types').ArtistPreferenceDto[],
+  token: string
+): Promise<import('../types').UpdatePreferencesResponse> {
+  try {
+    const response = await fetch(`${BASE_API_URL}/music/preferences/artists`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        firebaseUid,
+        preferences
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al actualizar preferencias de artistas');
+    }
+
+    return await response.json();
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
  * Actualiza la información del usuario en el backend.
  * @param userId - ID del usuario.
  * @param token - Token de autenticación generado por Firebase.
- * @param data - Datos del perfil a actualizar.
+ * @param profileData - Datos del perfil a actualizar según especificación OpenAPI.
  * @returns Respuesta del backend.
  */
 export async function updateUserInfo(
   userId: string,
   token: string,
-  data: Record<string, unknown>
-): Promise<any> {
+  profileData: import('../types').UpdateUserProfileRequest
+): Promise<import('../types').UpdateUserProfileResponse> {
   try {
-    const response = await fetch(`${BASE_API_URL}/user/${userId}/profile`, {
+    // Ensure userId is included in the request body as per API spec
+    const requestBody: import('../types').UpdateUserProfileRequest = {
+      userId,
+      ...profileData
+    };
+
+    const response = await fetch(`${BASE_API_URL}/User/${userId}/profile`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {

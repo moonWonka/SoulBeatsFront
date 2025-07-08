@@ -21,10 +21,11 @@ const EditProfilePage: React.FC = () => {
         try {
           const token = await user.getIdToken();
           const data = await getUserInfo(user.uid, token);
-          setName(data.name || '');
-          setAge(data.age || '');
-          setBio(data.bio || '');
-          setInterests(data.interests ? data.interests.join(', ') : '');
+          // Map API response fields to local state
+          setName(data.fullName || data.userName || '');
+          setAge(''); // Age not returned by getUserInfo endpoint
+          setBio(''); // Bio not returned by getUserInfo endpoint  
+          setInterests(''); // favoriteGenres not returned by getUserInfo endpoint
         } catch (err) {
           console.error(err);
           setError('Error al cargar la información del perfil.');
@@ -43,15 +44,22 @@ const EditProfilePage: React.FC = () => {
     setError('');
     try {
       const token = await user.getIdToken();
-      await updateUserInfo(user.uid, token, {
-        name,
-        age: age === '' ? null : Number(age),
+      
+      // Format data according to API specification
+      const profileData = {
+        displayName: name,
+        email: user.email || '',
+        age: age === '' ? undefined : Number(age),
         bio,
-        interests: interests
+        favoriteGenres: interests
           .split(',')
           .map((s) => s.trim())
-          .filter(Boolean),
-      });
+          .filter(Boolean)
+          .join(','), // Convert to comma-separated string
+        profilePictureUrl: user.photoURL || undefined
+      };
+      
+      await updateUserInfo(user.uid, token, profileData);
       navigate('/dashboard');
     } catch (err) {
       console.error(err);
