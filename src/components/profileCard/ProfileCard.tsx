@@ -28,9 +28,16 @@ const ProfileCard: React.FC<{ profile: UserProfile }> = ({ profile }) => {
               )}
             </div>
           </div>
-          {/* Bio and interests are removed from this view to match the image */}
-          {/* If bio is short and desired, it can be added here with line-clamp */}
-           {/* <p className="mt-3 text-sm text-gray-300 leading-relaxed line-clamp-2">{profile.bio}</p> */}
+          {profile.bio && (
+            <p className="mt-3 text-sm text-gray-300 leading-relaxed line-clamp-2">{profile.bio}</p>
+          )}
+          {profile.interests && profile.interests.length > 0 && (
+            <div className="mt-3">
+              <p className="text-sm text-gray-300">
+                <span className="font-semibold">Interests:</span> {profile.interests.join(', ')}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
