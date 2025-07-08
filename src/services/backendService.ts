@@ -29,6 +29,43 @@ export async function getUserInfo(userId: string, token: string): Promise<any> {
 }
 
 /**
+ * Placeholder function to simulate registering or logging in a Spotify user
+ * in the backend.
+ * @param spotifyProfile - Profile object from Spotify API.
+ * @param accessToken - Spotify access token.
+ * @returns Mock success response with user data.
+ */
+export async function registerOrLoginSpotifyUser(spotifyProfile: any, accessToken: string): Promise<any> {
+  console.log('backendService: registerOrLoginSpotifyUser called with:', { spotifyProfile, accessToken });
+
+  // Simulate backend call
+  await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+
+  // In a real backend, you would:
+  // 1. Verify the accessToken with Spotify (optional, if you trust the client-side verification).
+  // 2. Check if a user with this Spotify ID (spotifyProfile.id) already exists.
+  // 3. If exists, log them in (e.g., issue a session token or JWT for your backend).
+  // 4. If not exists, create a new user account linked to this Spotify ID.
+  // 5. Potentially create/link a Firebase user using a custom token if you want to unify auth.
+
+  // For now, return a mock success response.
+  const mockUser = {
+    id: spotifyProfile.id, // Use Spotify ID as user ID for now
+    email: spotifyProfile.email,
+    name: spotifyProfile.display_name || spotifyProfile.id, // Fallback to ID if display_name is not available
+    // Add any other relevant fields your application might expect for a user object
+  };
+
+  console.log('backendService: Mocking successful Spotify user registration/login:', mockUser);
+  return {
+    success: true,
+    message: 'Successfully registered/logged in with Spotify (mocked).',
+    user: mockUser,
+    // token: 'mockBackendSessionToken123' // Example: if your backend issues its own token
+  };
+}
+
+/**
  * Registra un nuevo usuario en el backend.
  * @param email - Correo electrónico del usuario.
  * @param password - Contraseña del usuario.
