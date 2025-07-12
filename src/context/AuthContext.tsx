@@ -2,10 +2,15 @@ import React, { createContext, useState, useContext, useEffect, ReactNode } from
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
 import { registerGoogleUser } from '../services/backendService';
+import { getSpotifyStatus } from '../services/spotifyBackendService';
+import { SpotifyProfile } from '../types';
 
 interface AuthContextProps {
   user: User | null;
   loading: boolean;
+  spotifyLinked: boolean;
+  spotifyProfile: SpotifyProfile | null;
+  refreshSpotifyStatus: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -23,6 +28,8 @@ export const useAuth = (): AuthContextProps => {
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [spotifyLinked, setSpotifyLinked] = useState<boolean>(false);
+  const [spotifyProfile, setSpotifyProfile] = useState<SpotifyProfile | null>(null);
 
   const login = async (email: string, password: string): Promise<void> => {
     try {
@@ -38,9 +45,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       await signOut(auth);
       setUser(null);
+      setSpotifyLinked(false);
+      setSpotifyProfile(null);
     } catch (error) {
       console.error('Error during logout:', error);
       throw error;
+    }
+  };
+
+  const refreshSpotifyStatus = async (): Promise<void> => {
+    if (!user) {
+      setSpotifyLinked(false);
+      setSpotifyProfile(null);
+      return;
+    }
+
+    try {
+      const token = await user.getIdToken();
+      const response = await getSpotifyStatus(token);
+      setSpotifyLinked(response.isLinked);
+      setSpotifyProfile(response.profile || null);
+    } catch (error) {
+      console.error('Error refreshing Spotify status:', error);
+      setSpotifyLinked(false);
+      setSpotifyProfile(null);
     }
   };
   useEffect(() => {
@@ -71,6 +99,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       setUser(currentUser);
       setLoading(false);
+
+      // Refresh Spotify status when user changes
+      if (currentUser) {
+        refreshSpotifyStatus();
+      } else {
+        setSpotifyLinked(false);
+        setSpotifyProfile(null);
+      }
     });
 
     return () => {
@@ -79,7 +115,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      spotifyLinked, 
+      spotifyProfile, 
+      refreshSpotifyStatus, 
+      login, 
+      logout 
+    }}>
       {children}
     </AuthContext.Provider>
   );
