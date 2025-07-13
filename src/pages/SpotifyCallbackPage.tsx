@@ -13,7 +13,12 @@ const SpotifyCallbackPage: React.FC = () => {
   useEffect(() => {
     const handleSpotifyCallback = async () => {
       try {
+        console.log('📱 SpotifyCallbackPage: Iniciando callback...');
+        console.log('Current URL:', window.location.href);
+        console.log('URL Params:', window.location.search);
+        
         if (!user) {
+          console.log('❌ Usuario no autenticado');
           setStatus('error');
           setMessage('Usuario no autenticado. Por favor, inicia sesión primero.');
           setTimeout(() => navigate('/login'), 3000);
@@ -21,8 +26,13 @@ const SpotifyCallbackPage: React.FC = () => {
         }
 
         const { code, error, state } = extractSpotifyCodeFromUrl();
+        console.log('🔍 Datos extraídos de URL:');
+        console.log('  - Code:', code);
+        console.log('  - Error:', error);
+        console.log('  - State:', state);
 
         if (error) {
+          console.log('❌ Error en callback de Spotify:', error);
           setStatus('error');
           setMessage(`Error en la autenticación: ${error}`);
           setTimeout(() => navigate('/profile'), 3000);
@@ -30,21 +40,26 @@ const SpotifyCallbackPage: React.FC = () => {
         }
 
         if (!code) {
+          console.log('❌ No se recibió código de autorización');
           setStatus('error');
           setMessage('No se recibió el código de autorización de Spotify.');
           setTimeout(() => navigate('/profile'), 3000);
           return;
         }
 
+        console.log('✅ Código recibido, obteniendo token de usuario...');
         const token = await user.getIdToken();
+        console.log('🔑 Token obtenido, vinculando cuenta...');
+        
         await linkSpotifyAccount(token, code);
+        console.log('🎉 Spotify vinculado exitosamente!');
 
         setStatus('success');
         setMessage('¡Spotify vinculado exitosamente!');
         setTimeout(() => navigate('/profile'), 2000);
 
       } catch (error) {
-        console.error('Error linking Spotify account:', error);
+        console.error('💥 Error linking Spotify account:', error);
         setStatus('error');
         setMessage('Error al vincular cuenta de Spotify. Inténtalo de nuevo.');
         setTimeout(() => navigate('/profile'), 3000);
