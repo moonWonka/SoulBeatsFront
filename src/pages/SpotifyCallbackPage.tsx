@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { extractSpotifyCodeFromUrl } from '../services/spotifyAuth';
+import { extractSpotifyCodeFromUrl, clearStoredLogs } from '../services/spotifyAuth';
 import { linkSpotifyAccount } from '../services/spotifyBackendService';
+import { SuccessMessage } from '../components/shared/SuccessMessage';
 
 const SpotifyCallbackPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading, refreshSpotifyStatus } = useAuth();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('Procesando autenticación con Spotify...');
 
   useEffect(() => {
     const handleSpotifyCallback = async () => {
       try {
-        console.log('📱 SpotifyCallbackPage: Iniciando callback...');
-        console.log('Current URL:', window.location.href);
-        console.log('URL Params:', window.location.search);
+        // Wait for auth state to load
+        if (loading) {
+          return;
+        }
         
         if (!user) {
-          console.log('❌ Usuario no autenticado');
           setStatus('error');
           setMessage('Usuario no autenticado. Por favor, inicia sesión primero.');
           setTimeout(() => navigate('/login'), 3000);
@@ -26,40 +27,37 @@ const SpotifyCallbackPage: React.FC = () => {
         }
 
         const { code, error, state } = extractSpotifyCodeFromUrl();
-        console.log('🔍 Datos extraídos de URL:');
-        console.log('  - Code:', code);
-        console.log('  - Error:', error);
-        console.log('  - State:', state);
 
         if (error) {
-          console.log('❌ Error en callback de Spotify:', error);
           setStatus('error');
           setMessage(`Error en la autenticación: ${error}`);
-          setTimeout(() => navigate('/profile'), 3000);
+          setTimeout(() => navigate('/dashboard'), 3000);
           return;
         }
 
         if (!code) {
-          console.log('❌ No se recibió código de autorización');
           setStatus('error');
           setMessage('No se recibió el código de autorización de Spotify.');
-          setTimeout(() => navigate('/profile'), 3000);
+          setTimeout(() => navigate('/dashboard'), 3000);
           return;
         }
-
-        console.log('✅ Código recibido, obteniendo token de usuario...');
-        const token = await user.getIdToken();
-        console.log('🔑 Token obtenido, vinculando cuenta...');
         
-        await linkSpotifyAccount(token, code);
-        console.log('🎉 Spotify vinculado exitosamente!');
+        const token = await user.getIdToken();
+        
+        // Enviar código de autorización al backend (flujo tradicional)
+        const response = await linkSpotifyAccount(token, code, state || undefined, user.uid);
+
+        // Clear stored data
+        clearStoredLogs();
+
+        // Refresh the Spotify status in the context
+        await refreshSpotifyStatus();
 
         setStatus('success');
-        setMessage('¡Spotify vinculado exitosamente!');
-        setTimeout(() => navigate('/profile'), 2000);
+        setMessage('Tu cuenta de Spotify ha sido vinculada exitosamente. Ahora puedes disfrutar de recomendaciones musicales personalizadas.');
 
       } catch (error) {
-        console.error('💥 Error linking Spotify account:', error);
+        console.error('Error linking Spotify account:', error);
         setStatus('error');
         setMessage('Error al vincular cuenta de Spotify. Inténtalo de nuevo.');
         setTimeout(() => navigate('/profile'), 3000);
@@ -67,7 +65,7 @@ const SpotifyCallbackPage: React.FC = () => {
     };
 
     handleSpotifyCallback();
-  }, [user, navigate]);
+  }, [user, loading, navigate, refreshSpotifyStatus]);
 
   const getStatusColor = () => {
     switch (status) {
@@ -87,13 +85,28 @@ const SpotifyCallbackPage: React.FC = () => {
     }
   };
 
+  // Success state - use full-screen SuccessMessage component
+  if (status === 'success') {
+    return (
+      <SuccessMessage
+        title="¡Spotify Conectado!"
+        message={message}
+        redirectPath="/dashboard"
+        autoRedirectDelay={4000}
+        showSpotifyDetails={true}
+        onManualRedirect={() => navigate('/dashboard')}
+      />
+    );
+  }
+
+  // Loading and Error states
   return (
     <div className="min-h-screen bg-gradient-to-br from-fuchsia-500 via-pink-400 to-fuchsia-600 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center px-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 max-w-md w-full text-center">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
         <div className="mb-6">
           <div className="text-6xl mb-4">{getStatusIcon()}</div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">
-            Autenticación Spotify
+            {status === 'loading' ? 'Procesando Autenticación' : 'Error en Autenticación'}
           </h1>
           <p className={`text-lg ${getStatusColor()}`}>
             {message}
@@ -106,12 +119,12 @@ const SpotifyCallbackPage: React.FC = () => {
           </div>
         )}
 
-        {status !== 'loading' && (
+        {status === 'error' && (
           <button
-            onClick={() => navigate('/profile')}
-            className="mt-4 px-6 py-2 bg-fuchsia-600 text-white rounded-lg hover:bg-fuchsia-700 transition-colors"
+            onClick={() => navigate('/dashboard')}
+            className="w-full py-3 px-4 bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-700 hover:to-pink-700 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105"
           >
-            Volver al Perfil
+            Volver al Dashboard
           </button>
         )}
       </div>

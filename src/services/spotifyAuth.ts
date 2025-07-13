@@ -2,10 +2,6 @@ export const initiateSpotifyAuth = (): void => {
   const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
   const redirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
   
-  console.log('🎵 Iniciando autenticación con Spotify...');
-  console.log('Client ID:', clientId);
-  console.log('Redirect URI:', redirectUri);
-  
   if (!clientId || !redirectUri) {
     console.error('Spotify configuration missing. Please check environment variables.');
     throw new Error('Spotify configuration incomplete');
@@ -20,30 +16,48 @@ export const initiateSpotifyAuth = (): void => {
     'user-library-read'
   ].join(' ');
 
-  console.log('Scopes solicitados:', scopes);
+  const state = crypto.randomUUID();
 
   const params = new URLSearchParams({
     client_id: clientId,
     response_type: 'code',
     redirect_uri: redirectUri,
     scope: scopes,
-    state: crypto.randomUUID(),
-    show_dialog: 'true' // Fuerza mostrar pantalla de permisos siempre
+    state: state,
+    show_dialog: 'true'
   });
 
   const authUrl = `https://accounts.spotify.com/authorize?${params.toString()}`;
-  console.log('🔗 URL de autorización:', authUrl);
-  console.log('🚀 Redirigiendo a Spotify para autorización...');
   
+  // Store state for validation later
+  localStorage.setItem('spotify_auth_state', state);
+  
+  // Use redirect instead of popup for better compatibility
   window.location.href = authUrl;
 };
 
 export const extractSpotifyCodeFromUrl = (): { code: string | null; error: string | null; state: string | null } => {
   const urlParams = new URLSearchParams(window.location.search);
   
-  return {
+  const result = {
     code: urlParams.get('code'),
     error: urlParams.get('error'),
     state: urlParams.get('state')
   };
+  
+  // Validate state if present
+  if (result.state) {
+    const storedState = localStorage.getItem('spotify_auth_state');
+    
+    if (storedState && result.state !== storedState) {
+      console.warn('⚠️ State mismatch - possible CSRF attack');
+      result.error = 'State mismatch - possible CSRF attack';
+    }
+  }
+  
+  return result;
+};
+
+export const clearStoredLogs = (): void => {
+  localStorage.removeItem('spotify_auth_state');
 };

@@ -26,6 +26,7 @@ const UserHomeScreen: React.FC = () => {
     }
   };
 
+
   return (
     <div className="min-h-full bg-gradient-to-br from-fuchsia-500 via-pink-400 to-fuchsia-600 dark:from-gray-900 dark:to-gray-800">
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 py-8">
@@ -71,10 +72,12 @@ const UserHomeScreen: React.FC = () => {
                 </OutlineButton>
               </div>
             ) : (
-              <OutlineButton onClick={handleSpotifyAction}>
-                <LinkIcon className="w-5 h-5 mr-2" />
-                Vincular con Spotify
-              </OutlineButton>
+              <div className="space-y-3">
+                <OutlineButton onClick={handleSpotifyAction}>
+                  <LinkIcon className="w-5 h-5 mr-2" />
+                  Vincular con Spotify
+                </OutlineButton>
+              </div>
             )}
           </div>
         </div>

@@ -63,14 +63,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const token = await user.getIdToken();
       const response = await getSpotifyStatus(token);
-      setSpotifyLinked(response.isLinked);
-      setSpotifyProfile(response.profile || null);
+      setSpotifyLinked(response.isConnected);
+      
+      // Map the new API response to legacy SpotifyProfile format
+      if (response.isConnected && response.displayName) {
+        const profile: SpotifyProfile = {
+          displayName: response.displayName,
+          email: response.email || '',
+          imageUrl: response.imageUrl,
+          spotifyId: response.spotifyId || ''
+        };
+        setSpotifyProfile(profile);
+      } else {
+        setSpotifyProfile(null);
+      }
     } catch (error) {
       console.error('Error refreshing Spotify status:', error);
       setSpotifyLinked(false);
       setSpotifyProfile(null);
     }
   };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -120,7 +133,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       loading, 
       spotifyLinked, 
       spotifyProfile, 
-      refreshSpotifyStatus, 
+      refreshSpotifyStatus,
       login, 
       logout 
     }}>
