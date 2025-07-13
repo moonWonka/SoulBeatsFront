@@ -10,19 +10,37 @@ import { unlinkSpotifyAccount } from '../services/spotifyBackendService';
 const UserHomeScreen: React.FC = () => {
   const { user, spotifyLinked, spotifyProfile, refreshSpotifyStatus } = useAuth();
   const navigate = useNavigate();
+  const [isStartingSpotifyAuth, setIsStartingSpotifyAuth] = React.useState(false);
+
+  // Log solo cuando cambia el estado de Spotify
+  React.useEffect(() => {
+    console.log('📱 Spotify status:', spotifyLinked ? 'Connected' : 'Not connected');
+  }, [spotifyLinked]);
 
   const handleSpotifyAction = async () => {
     if (spotifyLinked) {
+      console.log('🔗 Unlinking Spotify account...');
       try {
         if (!user) return;
         const token = await user.getIdToken();
         await unlinkSpotifyAccount(token);
         await refreshSpotifyStatus();
+        console.log('✅ Spotify account unlinked successfully');
       } catch (error) {
-        console.error('Error unlinking Spotify:', error);
+        console.error('❌ Error unlinking Spotify:', error);
       }
     } else {
+      console.log('🎵 Starting Spotify authentication...');
+      
+      setIsStartingSpotifyAuth(true);
+      
+      // Llamar directamente sin delay
       initiateSpotifyAuth();
+      
+      // Resetear el estado después de un momento
+      setTimeout(() => {
+        setIsStartingSpotifyAuth(false);
+      }, 2000);
     }
   };
 
@@ -48,6 +66,20 @@ const UserHomeScreen: React.FC = () => {
               Configurar Perfil
             </GradientButton>
             
+            {isStartingSpotifyAuth && (
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-2"></div>
+                  <span className="text-blue-700 dark:text-blue-300 font-medium">
+                    Abriendo ventana de Spotify...
+                  </span>
+                </div>
+                <p className="text-sm text-blue-600 dark:text-blue-400">
+                  Revisa la consola para ver los logs del proceso
+                </p>
+              </div>
+            )}
+            
             {spotifyLinked ? (
               <div className="space-y-3">
                 <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
@@ -71,9 +103,21 @@ const UserHomeScreen: React.FC = () => {
                 </OutlineButton>
               </div>
             ) : (
-              <OutlineButton onClick={handleSpotifyAction}>
-                <LinkIcon className="w-5 h-5 mr-2" />
-                Vincular con Spotify
+              <OutlineButton 
+                onClick={handleSpotifyAction}
+                disabled={isStartingSpotifyAuth}
+              >
+                {isStartingSpotifyAuth ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current mr-2"></div>
+                    Abriendo ventana...
+                  </>
+                ) : (
+                  <>
+                    <LinkIcon className="w-5 h-5 mr-2" />
+                    Vincular con Spotify
+                  </>
+                )}
               </OutlineButton>
             )}
           </div>
