@@ -108,3 +108,20 @@ export interface GetUserInfoResponse extends BaseResponse {
   phoneNumber?: string;
   role?: string;
 }
+
+// Spotify Types
+export interface SpotifyProfile {
+  displayName: string;
+  email: string;
+  imageUrl?: string;
+  spotifyId: string;
+}
+
+export interface SpotifyAuthResponse extends BaseResponse {
+  profile?: SpotifyProfile;
+}
+
+export interface SpotifyStatusResponse extends BaseResponse {
+  isLinked: boolean;
+  profile?: SpotifyProfile;
+}
