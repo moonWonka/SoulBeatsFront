@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { GradientButton } from '../components/shared/GradientButton';
 import { OutlineButton } from '../components/shared/OutlineButton';
@@ -6,23 +6,41 @@ import { UserCircle2, Settings, Link as LinkIcon, Unlink, Music } from 'lucide-r
 import { useNavigate } from 'react-router-dom';
 import { initiateSpotifyAuth } from '../services/spotifyAuth';
 import { unlinkSpotifyAccount } from '../services/spotifyBackendService';
+import { useSpotifyAuthLoading } from '../hooks/useSpotifyAuth';
 
 const UserHomeScreen: React.FC = () => {
   const { user, spotifyLinked, spotifyProfile, refreshSpotifyStatus } = useAuth();
   const navigate = useNavigate();
+  const [isUnlinkLoading, setIsUnlinkLoading] = useState(false);
+  const { isSpotifyAuthLoading, setSpotifyAuthLoading, clearSpotifyAuthLoading } = useSpotifyAuthLoading();
 
   const handleSpotifyAction = async () => {
     if (spotifyLinked) {
       try {
+        setIsUnlinkLoading(true);
         if (!user) return;
         const token = await user.getIdToken();
         await unlinkSpotifyAccount(token);
         await refreshSpotifyStatus();
       } catch (error) {
         console.error('Error unlinking Spotify:', error);
+      } finally {
+        setIsUnlinkLoading(false);
       }
     } else {
-      initiateSpotifyAuth();
+      // Solo iniciar auth si realmente no estamos vinculados
+      if (spotifyLinked) {
+        console.warn('Intento de vincular Spotify cuando ya está vinculado');
+        return;
+      }
+      
+      try {
+        setSpotifyAuthLoading(true);
+        initiateSpotifyAuth(false); // No forzar diálogo - usar permisos existentes
+      } catch (error) {
+        console.error('Error initiating Spotify auth:', error);
+        clearSpotifyAuthLoading();
+      }
     }
   };
 
@@ -66,16 +84,24 @@ const UserHomeScreen: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <OutlineButton onClick={handleSpotifyAction}>
-                  <Unlink className="w-5 h-5 mr-2" />
-                  Desvincular Spotify
+                <OutlineButton onClick={handleSpotifyAction} disabled={isUnlinkLoading}>
+                  {isUnlinkLoading ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current mr-2" />
+                  ) : (
+                    <Unlink className="w-5 h-5 mr-2" />
+                  )}
+                  {isUnlinkLoading ? 'Desvinculando...' : 'Desvincular Spotify'}
                 </OutlineButton>
               </div>
             ) : (
               <div className="space-y-3">
-                <OutlineButton onClick={handleSpotifyAction}>
-                  <LinkIcon className="w-5 h-5 mr-2" />
-                  Vincular con Spotify
+                <OutlineButton onClick={handleSpotifyAction} disabled={isSpotifyAuthLoading}>
+                  {isSpotifyAuthLoading ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current mr-2" />
+                  ) : (
+                    <LinkIcon className="w-5 h-5 mr-2" />
+                  )}
+                  {isSpotifyAuthLoading ? 'Conectando con Spotify...' : 'Vincular con Spotify'}
                 </OutlineButton>
               </div>
             )}

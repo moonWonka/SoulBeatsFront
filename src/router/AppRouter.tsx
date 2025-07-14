@@ -18,10 +18,13 @@ import SpotifyCallbackPage from '../pages/SpotifyCallbackPage';
 import ProtectedRoute from './ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useSpotifyAuthLoading } from '../hooks/useSpotifyAuth';
+import { SpotifyAuthOverlay } from '../components/shared/SpotifyAuthOverlay';
 
 const AppRouter: React.FC = () => {
   const { user, loading, logout } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme();
+  const { isSpotifyAuthLoading } = useSpotifyAuthLoading();
 
   // Mostrar loading mientras se verifica el estado de autenticación
   if (loading) {
@@ -198,6 +201,9 @@ const AppRouter: React.FC = () => {
             </Routes>
           )}
         </div>
+        
+        {/* Spotify Auth Overlay */}
+        <SpotifyAuthOverlay isVisible={isSpotifyAuthLoading} />
       </div>
     </Router>
   );

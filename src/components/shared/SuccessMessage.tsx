@@ -30,7 +30,6 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          handleRedirect();
           return 0;
         }
         return prev - 1;
@@ -39,6 +38,13 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({
 
     return () => clearInterval(timer);
   }, []);
+
+  // Separate useEffect for redirect to avoid setState during render
+  useEffect(() => {
+    if (countdown === 0 && !isRedirecting) {
+      handleRedirect();
+    }
+  }, [countdown, isRedirecting, navigate, onManualRedirect, redirectPath]);
 
   const handleRedirect = () => {
     setIsRedirecting(true);
