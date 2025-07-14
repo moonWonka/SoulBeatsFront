@@ -14,13 +14,17 @@ import UserHomeScreen from '../pages/UserHomeScreen';
 import ExampleRevisionPage from '../pages/ExampleRevisionPage';
 import EditProfilePage from '../pages/EditProfilePage';
 import MusicPreferencesPage from '../pages/MusicPreferencesPage';
+import SpotifyCallbackPage from '../pages/SpotifyCallbackPage';
 import ProtectedRoute from './ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useSpotifyAuthLoading } from '../hooks/useSpotifyAuth';
+import { SpotifyAuthOverlay } from '../components/shared/SpotifyAuthOverlay';
 
 const AppRouter: React.FC = () => {
   const { user, loading, logout } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme();
+  const { isSpotifyAuthLoading } = useSpotifyAuthLoading();
 
   // Mostrar loading mientras se verifica el estado de autenticación
   if (loading) {
@@ -135,6 +139,11 @@ const AppRouter: React.FC = () => {
           {!user ? (
             <Routes>
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/spotify/callback" element={
+                (() => {
+                  return <SpotifyCallbackPage />;
+                })()
+              } />
               <Route path="*" element={<Navigate to="/login" />} />
             </Routes>          ) : (
             <Routes>
@@ -186,11 +195,15 @@ const AppRouter: React.FC = () => {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/spotify/callback" element={<SpotifyCallbackPage />} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           )}
         </div>
+        
+        {/* Spotify Auth Overlay */}
+        <SpotifyAuthOverlay isVisible={isSpotifyAuthLoading} />
       </div>
     </Router>
   );

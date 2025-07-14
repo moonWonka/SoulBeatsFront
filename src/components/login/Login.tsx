@@ -23,10 +23,17 @@ export function Login() {
   // Get the intended destination from location state, or default to dashboard
   const from = location.state?.from?.pathname || '/dashboard';
 
-  // Función para detectar dispositivos móviles
-  const isMobileDevice = () => {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-           (window.innerWidth <= 768);
+  // Flag para saber si estamos esperando un resultado de redirect
+  const [isWaitingForRedirect, setIsWaitingForRedirect] = useState(() => {
+    return localStorage.getItem('expecting_google_redirect') === 'true';
+  });
+
+  // Función para detectar si el popup puede fallar (casos muy específicos)
+  const shouldUseRedirect = () => {
+    // Solo usar redirect en casos muy específicos donde popup definitivamente no funciona
+    return /OPR\/.*Version\/.*Mobile/i.test(navigator.userAgent) || // Opera Mini móvil
+           /(?:FBAN|FBAV)/i.test(navigator.userAgent) || // Facebook in-app browser
+           /(?:Instagram|IGAB)/i.test(navigator.userAgent); // Instagram in-app browser
   };
 
   // Redirect to intended destination if user is already logged in
@@ -36,15 +43,28 @@ export function Login() {
     }
   }, [user, navigate, from]);
 
-  // Manejar el resultado del redirect de Google Auth (para dispositivos móviles)
+  // Solo manejar redirect result si estamos esperando uno
   useEffect(() => {
     const handleRedirectResult = async () => {
+      // Solo verificar getRedirectResult si tenemos un flag que indica que esperamos uno
+      const expectingRedirect = localStorage.getItem('expecting_google_redirect') === 'true';
+      
+      if (!expectingRedirect) {
+        return;
+      }
+
       try {
+        console.log('Verificando resultado de redirect de Google...');
         const result = await getRedirectResult(auth);
+        
+        // Limpiar el flag independientemente del resultado
+        localStorage.removeItem('expecting_google_redirect');
+        setIsWaitingForRedirect(false);
+        
         if (result) {
           console.log('Usuario autenticado con Google (redirect):', result.user);
           
-          // Registrar usuario en el backend
+          // Registrar usuario en el backend (duplicado aquí por scope)
           try {
             const token = await result.user.getIdToken();
             const userData = {
@@ -59,12 +79,17 @@ export function Login() {
             console.log('Usuario registrado exitosamente en backend (redirect)');
           } catch (backendError) {
             console.log('Error al registrar en backend (redirect, usuario posiblemente ya existe):', backendError);
-            // Continuamos aunque falle el registro en backend, ya que el usuario está autenticado en Firebase
           }
           
           navigate(from, { replace: true });
+        } else {
+          // Si no hay resultado pero esperábamos uno, mostrar error
+          setError('No se pudo completar la autenticación. Inténtalo de nuevo.');
         }
       } catch (err: unknown) {
+        localStorage.removeItem('expecting_google_redirect');
+        setIsWaitingForRedirect(false);
+        
         if (err instanceof Error) {
           setError(`Error con Google: ${err.message}`);
         } else {
@@ -75,6 +100,20 @@ export function Login() {
 
     handleRedirectResult();
   }, [navigate, from]);
+
+  // Timeout de seguridad para limpiar estado de redirect
+  useEffect(() => {
+    if (isWaitingForRedirect) {
+      const timeout = setTimeout(() => {
+        console.warn('Timeout: limpiando estado de redirect después de 60 segundos');
+        localStorage.removeItem('expecting_google_redirect');
+        setIsWaitingForRedirect(false);
+        setError('La autenticación tardó demasiado. Por favor, inténtalo de nuevo.');
+      }, 60000); // 60 segundos timeout
+
+      return () => clearTimeout(timeout);
+    }
+  }, [isWaitingForRedirect]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -146,39 +185,47 @@ export function Login() {
       }
     }
   };  const handleGoogleAuth = async () => {
+    setError('');
+    
     try {
       const provider = new GoogleAuthProvider();
       
-      // Usar redirect en móviles y popup en desktop
-      if (isMobileDevice()) {
-        console.log('Iniciando autenticación Google con redirect (móvil)');
-        await signInWithRedirect(auth, provider);
-        // El resultado se manejará en el useEffect de getRedirectResult
-      } else {
-        console.log('Iniciando autenticación Google con popup (desktop)');
+      // Estrategia: Intentar popup primero, fallback a redirect si falla
+      if (shouldUseRedirect()) {
+        console.log('Usando redirect directamente (navegador in-app detectado)');
+        await performRedirectAuth(provider);
+        return;
+      }
+
+      console.log('Intentando autenticación con popup...');
+      
+      try {
+        // Intentar popup primero
         const result = await signInWithPopup(auth, provider);
-        const token = await result.user.getIdToken();
+        console.log('Popup exitoso, procesando usuario...');
+        await processGoogleUser(result.user);
+        navigate(from, { replace: true });
         
-        // Registrar usuario en el backend
-        try {
-          const userData = {
-            email: result.user.email || '',
-            displayName: result.user.displayName || '',
-            photoURL: result.user.photoURL || '',
-            uid: result.user.uid
-          };
-          
-          console.log('Registrando usuario en backend:', userData);
-          await registerGoogleUser(token, userData);
-          console.log('Usuario registrado exitosamente en backend');
-        } catch (backendError) {
-          console.log('Error al registrar en backend (usuario posiblemente ya existe):', backendError);
-          // Continuamos aunque falle el registro en backend, ya que el usuario está autenticado en Firebase
+      } catch (popupError: unknown) {
+        console.log('Popup falló, intentando fallback a redirect:', popupError);
+        
+        // Si el popup falla, usar redirect como fallback
+        if (popupError instanceof Error) {
+          // Errores comunes que indican que popup no funciona
+          if (popupError.message.includes('popup') || 
+              popupError.message.includes('blocked') ||
+              popupError.message.includes('closed')) {
+            
+            console.log('Fallback: usando redirect...');
+            await performRedirectAuth(provider);
+            return;
+          }
         }
         
-        console.log('Usuario autenticado con Google:', result.user);
-        navigate(from, { replace: true });
+        // Si no es error de popup, re-lanzar el error
+        throw popupError;
       }
+      
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(`Error con Google: ${err.message}`);
@@ -186,6 +233,41 @@ export function Login() {
         setError('Error desconocido al iniciar sesión con Google.');
       }
     }
+  };
+
+  // Función auxiliar para manejar el registro en backend
+  const processGoogleUser = async (user: any) => {
+    try {
+      const token = await user.getIdToken();
+      const userData = {
+        email: user.email || '',
+        displayName: user.displayName || '',
+        photoURL: user.photoURL || '',
+        uid: user.uid
+      };
+      
+      console.log('Registrando usuario en backend:', userData);
+      await registerGoogleUser(token, userData);
+      console.log('Usuario registrado exitosamente en backend');
+    } catch (backendError) {
+      console.log('Error al registrar en backend (usuario posiblemente ya existe):', backendError);
+      // No bloqueamos el login por errores de backend
+    }
+  };
+
+  // Función auxiliar para realizar redirect
+  const performRedirectAuth = async (provider: GoogleAuthProvider) => {
+    localStorage.setItem('expecting_google_redirect', 'true');
+    setIsWaitingForRedirect(true);
+    console.log('Iniciando redirect a Google...');
+    await signInWithRedirect(auth, provider);
+  };
+
+  // Función para limpiar estados de autenticación
+  const clearAuthStates = () => {
+    localStorage.removeItem('expecting_google_redirect');
+    setIsWaitingForRedirect(false);
+    setError('');
   };
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-fuchsia-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 p-4">
@@ -281,11 +363,18 @@ export function Login() {
             )}
 
             <div className="space-y-4">
-              <GradientButton type="submit">
+              <GradientButton type="submit" disabled={isWaitingForRedirect}>
                 {isRegistering ? 'Registrarse' : 'Iniciar Sesión'}
               </GradientButton>
-              <OutlineButton onClick={handleGoogleAuth}>
-                {isRegistering ? 'Registrarse con Google' : 'Iniciar Sesión con Google'}
+              <OutlineButton onClick={handleGoogleAuth} disabled={isWaitingForRedirect}>
+                {isWaitingForRedirect ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current mr-2" />
+                    Redirigiendo a Google...
+                  </div>
+                ) : (
+                  isRegistering ? 'Registrarse con Google' : 'Iniciar Sesión con Google'
+                )}
               </OutlineButton>
             </div>
           </form>

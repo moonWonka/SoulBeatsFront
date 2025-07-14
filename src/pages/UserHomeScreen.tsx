@@ -1,13 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { GradientButton } from '../components/shared/GradientButton';
 import { OutlineButton } from '../components/shared/OutlineButton';
-import { UserCircle2, Settings, Link as LinkIcon } from 'lucide-react';
+import { UserCircle2, Settings, Link as LinkIcon, Unlink, Music } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { initiateSpotifyAuth } from '../services/spotifyAuth';
+import { unlinkSpotifyAccount } from '../services/spotifyBackendService';
+import { useSpotifyAuthLoading } from '../hooks/useSpotifyAuth';
 
 const UserHomeScreen: React.FC = () => {
-  const { user } = useAuth();
+  const { user, spotifyLinked, spotifyProfile, refreshSpotifyStatus } = useAuth();
   const navigate = useNavigate();
+  const [isUnlinkLoading, setIsUnlinkLoading] = useState(false);
+  const { isSpotifyAuthLoading, setSpotifyAuthLoading, clearSpotifyAuthLoading } = useSpotifyAuthLoading();
+
+  const handleSpotifyAction = async () => {
+    if (spotifyLinked) {
+      try {
+        setIsUnlinkLoading(true);
+        if (!user) return;
+        const token = await user.getIdToken();
+        await unlinkSpotifyAccount(token);
+        await refreshSpotifyStatus();
+      } catch (error) {
+        console.error('Error unlinking Spotify:', error);
+      } finally {
+        setIsUnlinkLoading(false);
+      }
+    } else {
+      // Solo iniciar auth si realmente no estamos vinculados
+      if (spotifyLinked) {
+        console.warn('Intento de vincular Spotify cuando ya está vinculado');
+        return;
+      }
+      
+      try {
+        setSpotifyAuthLoading(true);
+        initiateSpotifyAuth(false); // No forzar diálogo - usar permisos existentes
+      } catch (error) {
+        console.error('Error initiating Spotify auth:', error);
+        clearSpotifyAuthLoading();
+      }
+    }
+  };
+
 
   return (
     <div className="min-h-full bg-gradient-to-br from-fuchsia-500 via-pink-400 to-fuchsia-600 dark:from-gray-900 dark:to-gray-800">
@@ -31,10 +67,44 @@ const UserHomeScreen: React.FC = () => {
               Configurar Perfil
             </GradientButton>
             
-            <OutlineButton onClick={() => console.log('Vincular con Spotify clickeado')}>
-              <LinkIcon className="w-5 h-5 mr-2" />
-              Vincular con Spotify
-            </OutlineButton>
+            {spotifyLinked ? (
+              <div className="space-y-3">
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Music className="w-5 h-5 text-green-600 mr-2" />
+                      <div>
+                        <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                          Spotify Conectado
+                        </p>
+                        <p className="text-xs text-green-600 dark:text-green-400">
+                          {spotifyProfile?.displayName || 'Usuario'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <OutlineButton onClick={handleSpotifyAction} disabled={isUnlinkLoading}>
+                  {isUnlinkLoading ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current mr-2" />
+                  ) : (
+                    <Unlink className="w-5 h-5 mr-2" />
+                  )}
+                  {isUnlinkLoading ? 'Desvinculando...' : 'Desvincular Spotify'}
+                </OutlineButton>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <OutlineButton onClick={handleSpotifyAction} disabled={isSpotifyAuthLoading}>
+                  {isSpotifyAuthLoading ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current mr-2" />
+                  ) : (
+                    <LinkIcon className="w-5 h-5 mr-2" />
+                  )}
+                  {isSpotifyAuthLoading ? 'Conectando con Spotify...' : 'Vincular con Spotify'}
+                </OutlineButton>
+              </div>
+            )}
           </div>
         </div>
       </div>

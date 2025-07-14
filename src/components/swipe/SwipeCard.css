@@ -12,4 +12,11 @@
   justify-content: center;
   overflow: hidden;
   user-select: none;
+  color: #1f2937;
+}
+
+.dark .swipe-card {
+  background: #1f2937;
+  color: #f9fafb;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.4);
 }

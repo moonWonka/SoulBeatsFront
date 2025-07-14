@@ -84,3 +84,92 @@ export interface UpdateArtistPreferencesRequest {
 export interface UpdatePreferencesResponse extends BaseResponse {
   updatedCount: number;
 }
+
+// User Profile Update Types based on OpenAPI specification
+export interface UpdateUserProfileRequest {
+  userId?: string;
+  displayName?: string;
+  email?: string;
+  age?: number;
+  bio?: string;
+  favoriteGenres?: string; // Comma-separated string
+  profilePictureUrl?: string;
+}
+
+export interface UpdateUserProfileResponse extends BaseResponse {
+  // No additional fields beyond BaseResponse according to spec
+}
+
+export interface GetUserInfoResponse extends BaseResponse {
+  id?: string;
+  userName?: string;
+  email?: string;
+  fullName?: string;
+  phoneNumber?: string;
+  role?: string;
+}
+
+// Spotify Types based on OpenAPI specification
+export interface PostSpotifyTokenExchangeRequest {
+  code?: string;
+  state?: string;
+  redirectUri?: string;
+  firebaseUid?: string;
+}
+
+export interface PostSpotifyTokenExchangeResponse extends BaseResponse {
+  isConnected: boolean;
+  spotifyUserId?: string;
+  expiresAt: string; // ISO date string
+}
+
+export interface SpotifyPlaylistModel {
+  id?: string;
+  name?: string;
+  description?: string;
+  public: boolean;
+  collaborative: boolean;
+  snapshotId?: string;
+  tracksTotal: number;
+  externalUrl?: string;
+  imageUrl?: string;
+  ownerDisplayName?: string;
+  ownerId?: string;
+}
+
+export interface GetSpotifyPlaylistsResponse extends BaseResponse {
+  playlists?: SpotifyPlaylistModel[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface GetSpotifyStatusResponse extends BaseResponse {
+  isConnected: boolean;
+  displayName?: string;
+  email?: string;
+  country?: string;
+  product?: string;
+  followers: number;
+  imageUrl?: string;
+  externalUrl?: string;
+  spotifyId?: string;
+  expiresAt?: string; // ISO date string
+}
+
+// Legacy types for compatibility (until we update all components)
+export interface SpotifyProfile {
+  displayName: string;
+  email: string;
+  imageUrl?: string;
+  spotifyId: string;
+}
+
+export interface SpotifyAuthResponse extends BaseResponse {
+  profile?: SpotifyProfile;
+}
+
+export interface SpotifyStatusResponse extends BaseResponse {
+  isLinked: boolean;
+  profile?: SpotifyProfile;
+}
