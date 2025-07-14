@@ -236,7 +236,7 @@ export function Login() {
   };
 
   // Función auxiliar para manejar el registro en backend
-  const processGoogleUser = async (user: any) => {
+  const processGoogleUser = async (user: { getIdToken: () => Promise<string>; email: string | null; displayName: string | null; photoURL: string | null; uid: string }) => {
     try {
       const token = await user.getIdToken();
       const userData = {
@@ -263,12 +263,6 @@ export function Login() {
     await signInWithRedirect(auth, provider);
   };
 
-  // Función para limpiar estados de autenticación
-  const clearAuthStates = () => {
-    localStorage.removeItem('expecting_google_redirect');
-    setIsWaitingForRedirect(false);
-    setError('');
-  };
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-fuchsia-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 p-4">
       <div className="w-full max-w-md">
