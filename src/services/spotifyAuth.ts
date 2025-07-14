@@ -1,4 +1,9 @@
-export const initiateSpotifyAuth = (): void => {
+/**
+ * Inicia el proceso de autenticación con Spotify
+ * @param forceDialog - Si es true, siempre muestra el diálogo de permisos de Spotify
+ *                     Si es false, solo muestra el diálogo si el usuario no ha dado permisos previamente
+ */
+export const initiateSpotifyAuth = (forceDialog: boolean = false): void => {
   const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
   const redirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
   
@@ -24,7 +29,7 @@ export const initiateSpotifyAuth = (): void => {
     redirect_uri: redirectUri,
     scope: scopes,
     state: state,
-    show_dialog: 'true'
+    show_dialog: forceDialog ? 'true' : 'false'
   });
 
   const authUrl = `https://accounts.spotify.com/authorize?${params.toString()}`;

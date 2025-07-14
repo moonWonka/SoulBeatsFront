@@ -11,7 +11,7 @@ const SpotifyCallbackPage: React.FC = () => {
   const { user, loading, refreshSpotifyStatus } = useAuth();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('Recibiendo respuesta de Spotify...');
-  const { setSpotifyAuthLoading, clearSpotifyAuthLoading } = useSpotifyAuthLoading();
+  const { clearSpotifyAuthLoading } = useSpotifyAuthLoading();
   const hasProcessed = useRef(false);
 
   useEffect(() => {
