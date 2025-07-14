@@ -136,7 +136,11 @@ const AppRouter: React.FC = () => {
           {!user ? (
             <Routes>
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/spotify/callback" element={<SpotifyCallbackPage />} />
+              <Route path="/spotify/callback" element={
+                (() => {
+                  return <SpotifyCallbackPage />;
+                })()
+              } />
               <Route path="*" element={<Navigate to="/login" />} />
             </Routes>          ) : (
             <Routes>
