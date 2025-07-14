@@ -147,19 +147,30 @@ const PlaylistCard: React.FC<{ playlist: SpotifyPlaylistModel }> = ({ playlist }
       onClick={handlePlaylistClick}
     >
       {/* Playlist Image */}
-      <div className="relative w-full h-48 bg-gradient-to-br from-fuchsia-400 to-pink-600">
+      <div className="relative w-full h-48 bg-gradient-to-br from-purple-400 to-pink-400">
+        {/* Imagen de prueba siempre visible */}
+        <img
+          src="https://picsum.photos/300/200?random=1"
+          alt="Test image"
+          className="w-full h-full object-cover absolute inset-0 opacity-50"
+        />
+        
         {playlist.imageUrl ? (
-          <img
-            src={playlist.imageUrl}
-            alt={playlist.name || 'Playlist'}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.style.display = 'none';
-            }}
-          />
+          <>
+            <img
+              src={playlist.imageUrl}
+              alt={playlist.name || 'Playlist'}
+              className="w-full h-full object-cover relative z-10"
+              onError={(e) => {
+                console.error('Spotify image failed to load:', playlist.imageUrl);
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+              }}
+              onLoad={() => console.log('Spotify image loaded successfully:', playlist.imageUrl)}
+            />
+          </>
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center relative z-10">
             <Music className="w-16 h-16 text-white opacity-60" />
           </div>
         )}
